@@ -1,0 +1,8 @@
+require 'shoes'
+
+Shoes.configuration.backend = :swt
+
+Shoes.app do
+  title "TEST!!"
+  rect 100, 100, 500, 400
+end
