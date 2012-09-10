@@ -1,0 +1,11 @@
+require 'shoes'
+
+Shoes.configuration.backend = :swt
+
+Shoes.app do
+  stroke cornflowerblue
+  strokewidth 8
+  fill chartreuse
+  title "Hello from Warbler!!"
+  rect 100, 100, 400, 300
+end

@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+require 'warbler'
+
+Warbler::Task.new
+
+Dir.chdir File.join(File.dirname(__FILE__), '..') do
+  Rake.application['jar:clean'].invoke
+  Rake.application['jar'].invoke
+end
