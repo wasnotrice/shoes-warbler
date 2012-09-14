@@ -1,6 +1,10 @@
-This is an experiment with using [Warbler]() to package a Shoes 4 app. It has 
+# Shoes-warbler
+
+This is an experiment with using [Warbler](https://github.com/jruby/warbler) to package a Shoes 4 app.
 
 ## Get started
+
+Consider this a proof of concept. You can replace the Shoes app and the gemspec as you wish.
 
 - an example Shoes 4 app at `bin/hello_from_warbler`. This can be any Shoes 4
   app. Just follow the template. Make sure your app does not have an extension.
@@ -12,4 +16,4 @@ This is an experiment with using [Warbler]() to package a Shoes 4 app. It has
     $ bin/package
     $ java -XstartOnFirstThread -Djruby.compat.version=1.9 -jar shoes-warbler.jar
 
-where `shoes-warbler.jar` is the named of your .jar
+where `shoes-warbler.jar` is the name of your .jar.
