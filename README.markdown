@@ -4,12 +4,23 @@ This is an experiment with using [Warbler](https://github.com/jruby/warbler) to 
 
 ## Setup your environment
 
-    rvm use jruby-1.6.7
-    rvm gemset create shoes-warbler
-    rvm use jruby-1.6.7@shoes-warbler
-    gem install bundle && bundle install    
+You may have to supplement these instructions :)
 
-    
+1. Install jruby and create a gemset for this project
+
+        rvm install jruby
+        rvm gemset create shoes-warbler
+        rvm use jruby-1.6.7@shoes-warbler
+
+2. Setup git submodules
+
+        git submodule init
+        git submodule update
+
+3. Build and install dependencies
+
+        rake deps
+        
 ## Get started
 
 Consider this a proof of concept. You can personalize as you wish.
@@ -23,6 +34,7 @@ Consider this a proof of concept. You can personalize as you wish.
   haven't been merged upstream yet).
 
 
+
 ## Configure your app
 
 Edit the `app.yaml` file. Currently, the only option is `name`, which will become the name of your .jar.
@@ -33,4 +45,5 @@ Edit the `app.yaml` file. Currently, the only option is `name`, which will becom
     $ java -XstartOnFirstThread -Djruby.compat.version=1.9 -jar shoes-warbler.jar
 
 where `shoes-warbler.jar` is the name of your .jar.
+
 
