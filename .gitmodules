@@ -1,0 +1,9 @@
+[submodule "vendor/shoes"]
+	path = vendor/shoes
+	url = git://github.com/wasnotrice/shoes4.git
+[submodule "vendor/swt"]
+	path = vendor/swt
+	url = git://github.com/wasnotrice/swt.git
+[submodule "vendor/warbler"]
+	path = vendor/warbler
+	url = git://github.com/wasnotrice/warbler.git
