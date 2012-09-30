@@ -3,6 +3,7 @@ DEPS = FileList['vendor/*']
 desc "Build and install custom dependencies"
 task :deps do
   DEPS.each do |dep|
+    next unless File.directory?(dep)
     cd dep do
       sh "gem build #{dep.pathmap('%f.gemspec')}"
     end
