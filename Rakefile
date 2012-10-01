@@ -1,4 +1,7 @@
+require 'rake/clean'
+
 DEPS = FileList['vendor/*']
+CLEAN.include '*.app', '*.jar'
 
 desc "Build and install custom dependencies"
 task :deps do
