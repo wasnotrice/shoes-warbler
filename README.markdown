@@ -46,19 +46,15 @@ Edit the `app.yaml` file. Currently, the only option is `name`, which will becom
 
 ## Package your app as a JAR
 
-    $ bin/package
+    $ rake jar
     $ java -XstartOnFirstThread -Djruby.compat.version=1.9 -jar test-app.jar
 
 where `test-app.jar` is the name of your JAR (as specified in your `app.yaml` file)
 
 ## Package your app a Mac APP
 
-    $ bin/package
-    $ CLASSPATH=vendor/appbundler-1.0.jar SHOES_APP_NAME=test-app ant
+    $ rake app
     $ open Test.app
 
-Make sure you set SHOES_APP_NAME to the name of your JAR (minus the
-extension). For now, the app is always called `Test.app`, no matter what
-your JAR is called.
-
+For now, the app is always called `Test.app`, no matter what your JAR is called. 
 

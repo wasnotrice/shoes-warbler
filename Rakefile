@@ -1,7 +1,10 @@
 require 'rake/clean'
+require 'yaml'
 
 DEPS = FileList['vendor/*']
 CLEAN.include '*.app', '*.jar'
+APP = YAML.load(File.open 'app.yaml')
+JAR = "#{APP['name']}.jar"
 
 desc "Build and install custom dependencies"
 task :deps do
@@ -14,4 +17,19 @@ task :deps do
     sh "gem install #{gemfile}"
     rm_f gemfile
   end
+end
+
+desc "Package a JAR as an APP"
+task :app => :jar do
+  ENV['JAVA_HOME'] = "/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home"
+  ENV['CLASSPATH'] = 'vendor/appbundler-1.0.jar'
+  ENV['SHOES_APP_NAME'] = APP['name']
+  sh 'ant'
+end
+
+desc "Package as a JAR"
+task :jar => JAR
+
+file JAR do
+  sh 'bin/package'
 end
