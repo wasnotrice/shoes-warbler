@@ -16,16 +16,21 @@ module Shoes
 
           @config = Warbler::Config.new do |c|
             c.jar_name = app['name'] if app['name']
+            c.excludes += FileList[*app['excludes']].pathmap(c.pathmaps.application.first)
           end
 
-          Warbler::Task.new(nil, @config)
+          @jar = Warbler::Jar.new
         end
 
-        def create(config=@config)
-          Dir.chdir(File.expand_path '../..', __FILE__) do
-            Rake.application['jar:clean'].invoke
-            Rake.application['jar'].invoke
-          end
+        def config
+          @jar.apply(@config)
+          @jar.files.delete_if { |k, v| @config.excludes.include? k }
+        end
+
+        def create
+          jar_filename = "#{@config.jar_name}.#{@config.jar_extension}"
+          rm jar_filename if File.exist?(jar_filename)
+          @jar.create(@config)
         end
       end
     end
@@ -33,5 +38,6 @@ module Shoes
 end
 
 jar = Shoes::Swt::Package::Jar.new(File.expand_path '../../app.yaml', __FILE__)
+jar.config
 jar.create
 
