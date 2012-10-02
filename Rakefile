@@ -1,4 +1,5 @@
 require 'rake/clean'
+require 'ant'
 require 'yaml'
 
 DEPS = FileList['vendor/*']
@@ -22,9 +23,8 @@ end
 desc "Package a JAR as an APP"
 task :app => :jar do
   ENV['JAVA_HOME'] = "/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home"
-  ENV['CLASSPATH'] = 'vendor/appbundler-1.0.jar'
   ENV['SHOES_APP_NAME'] = APP['name']
-  sh 'ant'
+  ant '-f build.xml shoes-app'
 end
 
 desc "Package as a JAR"

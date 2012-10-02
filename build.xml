@@ -1,17 +1,21 @@
 <project>
   <property environment="env" />
-  <taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask"/>
-  <bundleapp outputdirectory="."
-    name="Test"
-    displayname="Test"
-    identifier="com.hackety.shoes.Test"
-    shortversion="1.0"
-    applicationCategory="public.app-category.developer-tools"
-    mainclassname="JarMain">
-    <runtime dir="${env.JAVA_HOME}"/>
-    <classpath file="${env.SHOES_APP_NAME}.jar"/>
-    <option value="-Dapple.laf.useScreenMenuBar=true"/>
-    <option value="-Djruby.compat.version=1.9"/>
-    <option value="-XstartOnFirstThread"/>
-  </bundleapp>
+  <taskdef name="bundleapp"
+    classname="com.oracle.appbundler.AppBundlerTask"
+    classpath="vendor/appbundler-1.0.jar" />
+  <target name="shoes-app">
+    <bundleapp outputdirectory="."
+      name="Test"
+      displayname="Test"
+      identifier="com.hackety.shoes.Test"
+      shortversion="1.0"
+      applicationCategory="public.app-category.developer-tools"
+      mainclassname="JarMain">
+      <runtime dir="${env.JAVA_HOME}"/>
+      <classpath file="${env.SHOES_APP_NAME}.jar"/>
+      <option value="-Dapple.laf.useScreenMenuBar=true"/>
+      <option value="-Djruby.compat.version=1.9"/>
+      <option value="-XstartOnFirstThread"/>
+    </bundleapp>
+  </target>
 </project>
