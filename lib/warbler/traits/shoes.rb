@@ -9,7 +9,10 @@ module Warbler
       end
 
       def self.requires?(trait)
-        trait == Traits::Jar
+        # Actually, it would be better to dump the NoGemspec trait, but since
+        # we can't do that, we can at least make sure that this trait gets
+        # processed later by declaring that it requires NoGemspec.
+        [Traits::Jar, Traits::NoGemspec].include? trait
       end
 
       def before_configure
