@@ -1,0 +1,7 @@
+require 'shoes'
+
+Shoes.configuration.backend = :swt
+
+Shoes.app do
+  tagline "My Shoes are in a bundle!"
+end
