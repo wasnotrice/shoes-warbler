@@ -11,17 +11,15 @@ module Shoes
     module Package
       class Jar
         def initialize
-          @config = Warbler::Config.new
           @jar = Warbler::Jar.new
         end
 
-        def config
-          @jar.apply(@config)
+        def apply(config)
+          @jar.apply(config)
         end
 
-        def create
-          jar_filename = "#{@config.jar_name}.#{@config.jar_extension}"
-          @jar.create(@config)
+        def create(config)
+          @jar.create(config)
         end
       end
     end
@@ -29,6 +27,7 @@ module Shoes
 end
 
 jar = Shoes::Swt::Package::Jar.new
-jar.config
-jar.create
+config = Warbler::Config.new
+jar.apply(config)
+jar.create(config)
 
