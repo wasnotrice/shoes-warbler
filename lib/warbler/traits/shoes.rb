@@ -13,15 +13,19 @@ module Warbler
       end
 
       def before_configure
-        @app = {
-          name: 'Shoes App',
-          ignore: []
-        }
+        @app = { name: 'Shoes App' }
         @app.update YAML.load(File.read 'app.yaml')
+        @app['ignore'] = Array(@app['ignore'])
+        @app['gems'] = Array(@app['gems']) << 'shoes'
         @app['shortname'] ||= @app['name'].downcase.gsub(/\W+/, '')
+
+        puts @app['gems']
 
         config.jar_name = @app['shortname']
         config.pathmaps.application = ['shoes-app/%p']
+        specs = @app['gems'].map { |g| Gem::Specification.find_by_name(g) }
+        dependencies = specs.map { |s| s.runtime_dependencies }.flatten
+        (specs + dependencies).uniq.each { |g| config.gems << g }
         config.excludes += FileList[*Array(@app['ignore'])].pathmap(config.pathmaps.application.first)
       end
 

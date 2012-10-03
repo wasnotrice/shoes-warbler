@@ -16,6 +16,8 @@ shortname: sugarclouds
 ignore:
   - 'vendor/**/*'
   - 'vendor'
+  - 'lib/**/*'
+  - 'lib'
   - '*.app/**/*'
   - '*.app'
 
@@ -23,8 +25,15 @@ ignore:
 run: bin/hello_from_warbler
 
 # -----------------------------------------------------------------------------
+# The following options are new in Shoes 4. They don't work in Shoes 3.
+# -----------------------------------------------------------------------------
+
+# Installed gems to bundle with the app
+gems:
+
+# -----------------------------------------------------------------------------
 # The following options are only available for Shoes 3. They won't work (yet)
-# on Shoes 4.
+# in Shoes 4.
 # -----------------------------------------------------------------------------
 
 # The app's version number
