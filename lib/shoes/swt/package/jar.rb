@@ -1,6 +1,3 @@
-#!/usr/bin/env ruby
-$LOAD_PATH.unshift(File.expand_path "../../lib", __FILE__)
-
 require 'rubygems'
 require 'yaml'
 require 'warbler'
@@ -25,9 +22,3 @@ module Shoes
     end
   end
 end
-
-jar = Shoes::Swt::Package::Jar.new
-config = Warbler::Config.new
-jar.apply(config)
-jar.create(config)
-

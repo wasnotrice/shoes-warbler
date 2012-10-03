@@ -20,7 +20,7 @@ ignore:
   - '*.app'
 
 # How to run the app
-run: bin/shoes_in_a_bundle
+run: bin/hello_from_warbler
 
 # -----------------------------------------------------------------------------
 # The following options are only available for Shoes 3. They won't work (yet)

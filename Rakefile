@@ -1,3 +1,5 @@
+$LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
+
 require 'rake/clean'
 require 'ant'
 require 'yaml'
@@ -33,5 +35,10 @@ desc "Package as a JAR"
 task :jar => JAR
 
 file JAR do
-  sh 'bin/package'
+  require 'shoes/swt/package/jar'
+
+  jar = Shoes::Swt::Package::Jar.new
+  config = Warbler::Config.new
+  jar.apply(config)
+  jar.create(config)
 end
