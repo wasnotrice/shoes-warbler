@@ -3,13 +3,17 @@ $LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
 require 'rake/clean'
 require 'ant'
 require 'yaml'
+require 'shoes/package/configuration'
 
 DEPS = FileList['vendor/*']
 CLEAN.include '*.app', '*.jar'
 CLEAN.exclude 'Shoes Template.app'
-APP = YAML.load(File.open 'app.yaml')
-APP_FILENAME = "#{APP['name']}.app"
-JAR = "#{APP['shortname']}.jar"
+CONFIG = Shoes::Package::Configuration.new(YAML.load(File.open 'app.yaml'))
+APP = "#{CONFIG.name}.app"
+APP_EXECUTABLE = "#{APP}/Contents/MacOs/JavaAppLauncher"
+APP_ICON_OSX = CONFIG.icons[:osx].pathmap "#{APP}/Contents/Resources/%f"
+JAR = "#{CONFIG.shortname}.jar"
+SHOES_APP_TEMPLATE = ENV['SHOES_APP_TEMPLATE'] || "templates/Shoes Template.app"
 
 desc "Build and install custom dependencies"
 task :deps do
@@ -24,11 +28,56 @@ task :deps do
   end
 end
 
-desc "Package a JAR as an APP"
-task :app => :jar do
-  ENV['JAVA_HOME'] = "/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home"
-  ENV['SHOES_APP_NAME'] = APP['shortname']
-  ant '-f build.xml shoes-app'
+task :app => 'app:inject'
+
+namespace :app do
+  desc "Package a JAR as an APP (only available on OS X)"
+  task 'template:generate' => :jar do
+    fail "Only available on OS X" unless RUBY_PLATFORM =~ /darwin/
+    ENV['JAVA_HOME'] = "/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home"
+    ENV['SHOES_APP_NAME'] = CONFIG.shortname
+    ant '-f build.xml shoes-app'
+    mv SHOES_APP_TEMPLATE, SHOES_APP_TEMPLATE.pathmap('%p.backup')
+    mv 'Test.app', SHOES_APP_TEMPLATE
+  end
+
+  desc "Inject a JAR into an APP template"
+  task :inject => ['app:inject_jar', 'app:inject_config']
+
+  task :copy_template => APP do
+    chmod 0755, APP_EXECUTABLE
+  end
+
+  file APP => [SHOES_APP_TEMPLATE] do |t|
+    cp_r t.prerequisites.first, t.name
+  end
+
+  task :inject_icon => APP_ICON_OSX
+
+  file APP_ICON_OSX => :copy_template do |t|
+    rm_rf APP_ICON_OSX.pathmap('%d/GenericApp.icns')
+    cp CONFIG.icons[:osx], APP_ICON_OSX
+    # Encourage Finder to reload icon
+    touch APP
+  end
+
+  task :inject_jar => [:jar, :copy_template] do
+    jar_dir = "#{APP}/Contents/Java"
+    rm_rf "#{jar_dir}/*"
+    cp JAR, "#{jar_dir}/"
+  end
+
+  task :inject_config => [:copy_template, :inject_icon] do
+    require 'plist'
+    plist = "#{APP}/Contents/Info.plist"
+    template = Plist.parse_xml(plist)
+    template['CFBundleIdentifier'] = "com.hackety.shoes.#{CONFIG.shortname}"
+    template['CFBundleDisplayName'] = CONFIG.name
+    template['CFBundleName'] = CONFIG.name
+    template['CFBundleVersion'] = CONFIG.version
+    template['CFBundleIconFile'] = APP_ICON_OSX.pathmap('%f')
+    File.open(plist, 'w') { |f| f.write template.to_plist }
+  end
 end
 
 desc "Package as a JAR"

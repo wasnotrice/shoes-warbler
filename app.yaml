@@ -18,6 +18,8 @@ ignore:
   - 'vendor'
   - 'lib/**/*'
   - 'lib'
+  - 'templates/**/*'
+  - 'templates'
   - '*.app/**/*'
   - '*.app'
 
@@ -44,7 +46,7 @@ release: Mindfully
 
 # App icons for various platforms
 icons:
-  osx: path/to/App.icns
+  osx: img/Shoes.icns
   gtk: path/to/app.png
   win32: path/to/App.ico
 
