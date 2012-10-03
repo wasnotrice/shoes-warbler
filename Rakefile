@@ -4,8 +4,10 @@ require 'yaml'
 
 DEPS = FileList['vendor/*']
 CLEAN.include '*.app', '*.jar'
+CLEAN.exclude 'Shoes Template.app'
 APP = YAML.load(File.open 'app.yaml')
-JAR = "#{APP['name']}.jar"
+APP_FILENAME = "#{APP['name']}.app"
+JAR = "#{APP['shortname']}.jar"
 
 desc "Build and install custom dependencies"
 task :deps do
@@ -23,7 +25,7 @@ end
 desc "Package a JAR as an APP"
 task :app => :jar do
   ENV['JAVA_HOME'] = "/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home"
-  ENV['SHOES_APP_NAME'] = APP['name']
+  ENV['SHOES_APP_NAME'] = APP['shortname']
   ant '-f build.xml shoes-app'
 end
 
