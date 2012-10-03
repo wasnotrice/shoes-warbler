@@ -20,7 +20,7 @@ ignore:
   - '*.app'
 
 # How to run the app
-run: app/sugarclouds.rb
+run: bin/shoes_in_a_bundle
 
 # -----------------------------------------------------------------------------
 # The following options are only available for Shoes 3. They won't work (yet)
