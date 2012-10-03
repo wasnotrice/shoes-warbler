@@ -17,8 +17,6 @@ module Shoes
 
         def config
           @jar.apply(@config)
-          # Not sure why Warbler doesn't do this automatically
-          @jar.files.delete_if { |k, v| @config.excludes.include? k }
         end
 
         def create

@@ -29,6 +29,8 @@ module Warbler
       end
 
       def update_archive(jar)
+        # Not sure why Warbler doesn't do this automatically
+        jar.files.delete_if { |k, v| @config.excludes.include? k }
         add_main_rb(jar, apply_pathmaps(config, default_executable, :application))
       end
 
