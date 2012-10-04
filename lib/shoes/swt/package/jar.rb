@@ -1,5 +1,3 @@
-require 'rubygems'
-require 'yaml'
 require 'warbler'
 require 'warbler/traits/shoes'
 
@@ -9,14 +7,12 @@ module Shoes
       class Jar
         def initialize
           @jar = Warbler::Jar.new
+          @config = Warbler::Config.new
         end
 
-        def apply(config)
-          @jar.apply(config)
-        end
-
-        def create(config)
-          @jar.create(config)
+        def package(config = @config)
+          @jar.apply config
+          @jar.create config
         end
       end
     end

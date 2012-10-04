@@ -38,6 +38,12 @@ module Warbler
         add_main_rb(jar, apply_pathmaps(config, default_executable, :application))
       end
 
+      # Uses the `@app_config.run` if it exists. Otherwise, looks in the
+      # application's `bin` directory for an executable with the same name as
+      # the jar. If this also fails, defaults to the first executable (alphabetically) in the
+      # applications `bin` directory.
+      #
+      # @return [String] filename of the executable to run
       def default_executable
         return @app_config.run.split('\s').first if @app_config.run
         exes = Dir['bin/*'].sort

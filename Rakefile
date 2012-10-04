@@ -37,8 +37,5 @@ task :jar => JAR
 file JAR do
   require 'shoes/swt/package/jar'
 
-  jar = Shoes::Swt::Package::Jar.new
-  config = Warbler::Config.new
-  jar.apply(config)
-  jar.create(config)
+  Shoes::Swt::Package::Jar.new.package
 end

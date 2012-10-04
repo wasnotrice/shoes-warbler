@@ -33,7 +33,7 @@ module Shoes
 
         # Overwrite defaults with supplied config
         @config = config.inject(@config) { |c, (k, v)| set c, k, v }
-        
+
         # Ensure that we always have what we need
         [:ignore, :gems].each { |k| @config[k] = Array(@config[k]) }
         @config[:gems] << 'shoes'
