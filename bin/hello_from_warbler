@@ -1,7 +1,3 @@
-require 'shoes'
-
-Shoes.configuration.backend = :swt
-
 Shoes.app do
   stroke cornflowerblue
   strokewidth 8
