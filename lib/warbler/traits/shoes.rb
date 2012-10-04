@@ -1,3 +1,5 @@
+require 'shoes/package/configuration'
+
 module Warbler
   module Traits
     class Shoes
@@ -16,20 +18,14 @@ module Warbler
       end
 
       def before_configure
-        @app = { name: 'Shoes App' }
-        @app.update YAML.load(File.read 'app.yaml')
-        @app['ignore'] = Array(@app['ignore'])
-        @app['gems'] = Array(@app['gems']) << 'shoes'
-        @app['shortname'] ||= @app['name'].downcase.gsub(/\W+/, '')
-
-        puts @app['gems']
-
-        config.jar_name = @app['shortname']
+        custom_config = YAML.load(File.read 'app.yaml')
+        @app_config = ::Shoes::Package::Configuration.new(custom_config)
+        config.jar_name = @app_config.shortname
         config.pathmaps.application = ['shoes-app/%p']
-        specs = @app['gems'].map { |g| Gem::Specification.find_by_name(g) }
+        specs = @app_config.gems.map { |g| Gem::Specification.find_by_name(g) }
         dependencies = specs.map { |s| s.runtime_dependencies }.flatten
         (specs + dependencies).uniq.each { |g| config.gems << g }
-        config.excludes += FileList[*Array(@app['ignore'])].pathmap(config.pathmaps.application.first)
+        config.excludes += FileList[*@app_config.ignore].pathmap(config.pathmaps.application.first)
       end
 
       def after_configure
@@ -42,7 +38,7 @@ module Warbler
       end
 
       def default_executable
-        return @app['run'].split('\s').first if @app['run']
+        return @app_config.run.split('\s').first if @app_config.run
         exes = Dir['bin/*'].sort
         exe = exes.grep(/#{config.jar_name}/).first || exes.first
         raise "No executable script found" unless exe

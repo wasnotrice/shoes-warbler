@@ -1,12 +1,10 @@
 name: Sugar Clouds
 shortname: sweet-nebulae
 ignore:
-  - 'vendor/**/*'
-  - 'vendor'
+  - vendor/**/*
+  - vendor
 run: bin/hello_world
-gems:
-  - 'rspec'
-  - 'some-other-gem'
+gems: rspec
 version: 0.0.1
 release: Mindfully
 icons:
@@ -16,3 +14,4 @@ icons:
 dmg:
   ds_store: path/to/custom/.DS_Store
   background: path/to/custom/background.png
+custom: my custom feature

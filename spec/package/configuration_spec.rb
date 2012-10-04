@@ -8,7 +8,7 @@ describe Shoes::Package::Configuration do
     its(:name) { should eq('Shoes App') }
     its(:shortname) { should eq('shoesapp') }
     its(:ignore) { should be_empty }
-    its(:gems) { should be_empty }
+    its(:gems) { should include('shoes') }
     its(:version) { should eq('0.0.0') }
     its(:release) { should eq('Rookie') }
     its(:icons) { should be_an_instance_of(Hash) }
@@ -37,6 +37,12 @@ describe Shoes::Package::Configuration do
         subject.dmg[:background].should eq('path/to/default/background.png')
       end
     end
+
+    describe "#to_hash" do
+      it "round-trips" do
+        Shoes::Package::Configuration.new(subject.to_hash).should eq(subject)
+      end
+    end
   end
 
   context "with options" do
@@ -46,8 +52,9 @@ describe Shoes::Package::Configuration do
 
     its(:name) { should eq('Sugar Clouds') }
     its(:shortname) { should eq('sweet-nebulae') }
-    its(:ignore) { should include('vendor') }
+    its(:ignore) { should include('vendor/**/*') }
     its(:gems) { should include('rspec') }
+    its(:gems) { should include('shoes') }
     its(:version) { should eq('0.0.1') }
     its(:release) { should eq('Mindfully') }
     its(:icons) { should be_an_instance_of(Hash) }
@@ -75,6 +82,11 @@ describe Shoes::Package::Configuration do
       it "has background" do
         subject.dmg[:background].should eq('path/to/custom/background.png')
       end
+    end
+
+    it "incorporates custom features" do
+      subject.custom.should eq('my custom feature')
+
     end
   end
 end

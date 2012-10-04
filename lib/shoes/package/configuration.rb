@@ -1,12 +1,22 @@
 module Shoes
   module Package
+    # Configuration for Shoes packagers. Example usage:
+    #
+    #     custom_config = YAML.load(File.open('app.yaml'))
+    #     config = Shoes::Package::Configuration(custom_config)
+    #
+    # If your configuration uses hashes, the keys will always be
+    # symbols, even if you have created it with string keys. It's just
+    # easier that way.
+    #
+    # This is a value object. If you need to modify your configuration
+    # after initialization, dump it with #to_hash, make your changes,
+    # and instantiate a new object.
     class Configuration
       # @param [Hash] config user options
       def initialize(config={})
         @config = {
           name: 'Shoes App',
-          ignore: [],
-          gems: [],
           version: '0.0.0',
           release: 'Rookie',
           icons: {
@@ -23,17 +33,27 @@ module Shoes
 
         # Overwrite defaults with supplied config
         @config = config.inject(@config) { |c, (k, v)| set c, k, v }
+        
+        # Ensure that we always have what we need
+        [:ignore, :gems].each { |k| @config[k] = Array(@config[k]) }
+        @config[:gems] << 'shoes'
 
-        # Define accessors for each key
+        # Define reader for each key
         metaclass = class << self; self; end
         @config.keys.each do |k|
           metaclass.send(:define_method, k) do
             @config[k]
           end
-          metaclass.send(:define_method, "#{k}=".to_sym) do |v|
-            @config = set @config, k, v
-          end
         end
+      end
+
+      def to_hash
+        @config
+      end
+
+      def ==(other)
+        super unless other.respond_to?(:to_hash)
+        @config == other.to_hash
       end
 
       private
