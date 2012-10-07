@@ -8,12 +8,12 @@ module ZipHelpers
   end
 
   # need these values from a context block, so let doesn't work
-  def current_dir
+  def spec_dir
     Pathname.new(__FILE__).parent
   end
 
   def input_dir
-    current_dir.parent.join 'support', 'zip'
+    spec_dir.join 'support', 'zip'
   end
 
   def relative_input_paths(from_dir)

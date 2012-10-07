@@ -6,6 +6,7 @@ require 'shoes/package/zip_directory_contents'
 include ZipHelpers
 
 describe Shoes::Package::ZipDirectoryContents do
+  subject { Shoes::Package::ZipDirectoryContents.new input_dir, output_file }
   include_context 'zip'
 
   context "output file" do

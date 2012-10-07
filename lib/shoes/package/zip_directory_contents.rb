@@ -11,9 +11,9 @@ module Shoes
       end
       
       # Zip the contents of the input directory, without the root.
-      def write_without_directory()
+      def write
         entries = @input_dir.children(false)
-        write entries, @input_dir, ''
+        @zip.write entries, @input_dir, ''
       end
     end
   end
