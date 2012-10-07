@@ -6,6 +6,15 @@ This is an experiment with using [Warbler](https://github.com/jruby/warbler) and
 
 You need the Java 7 JDK and Apache Ant installed.
 
+### OS X
+
+Download and install Oracle Java 7 or OpenJDK 7
+
+### Ubuntu
+
+    $ sudo apt-get install openjdk-7-jdk
+    $ sudo apt-get install ant
+
 ## Setup your environment
 
 You may have to supplement these instructions :)
@@ -24,7 +33,10 @@ You may have to supplement these instructions :)
 3. Build and install dependencies
 
         rake deps
-        
+ 
+4. Install gems
+
+        gem install plist
 ## Get started
 
 Consider this a proof of concept. You can personalize as you wish. You get:

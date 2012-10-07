@@ -14,6 +14,7 @@ APP_EXECUTABLE = "#{APP}/Contents/MacOs/JavaAppLauncher"
 APP_ICON_OSX = CONFIG.icons[:osx].pathmap "#{APP}/Contents/Resources/%f"
 JAR = "#{CONFIG.shortname}.jar"
 SHOES_APP_TEMPLATE = ENV['SHOES_APP_TEMPLATE'] || "templates/Shoes Template.app"
+SHOES_APP_TEMPLATE_ZIP = "#{SHOES_APP_TEMPLATE}.zip"
 
 desc "Build and install custom dependencies"
 task :deps do
@@ -31,14 +32,25 @@ end
 task :app => 'app:inject'
 
 namespace :app do
-  desc "Package a JAR as an APP (only available on OS X)"
-  task 'template:generate' => :jar do
-    fail "Only available on OS X" unless RUBY_PLATFORM =~ /darwin/
-    ENV['JAVA_HOME'] = "/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home"
-    ENV['SHOES_APP_NAME'] = CONFIG.shortname
-    ant '-f build.xml shoes-app'
-    mv SHOES_APP_TEMPLATE, SHOES_APP_TEMPLATE.pathmap('%p.backup')
-    mv 'Test.app', SHOES_APP_TEMPLATE
+  namespace :template do
+    desc "Package a JAR as an APP (only available on OS X)"
+    task :generate => :jar do
+      fail "Only available on OS X" unless RUBY_PLATFORM =~ /darwin/
+      ENV['JAVA_HOME'] = "/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home"
+      ENV['SHOES_APP_NAME'] = CONFIG.shortname
+      ant '-f build.xml shoes-app'
+      mv SHOES_APP_TEMPLATE, SHOES_APP_TEMPLATE.pathmap('%p.backup')
+      mv 'Test.app', SHOES_APP_TEMPLATE
+    end
+
+    task :zip => SHOES_APP_TEMPLATE_ZIP
+    require 'shoes/package/zip_directory'
+
+    file SHOES_APP_TEMPLATE_ZIP => SHOES_APP_TEMPLATE do
+      rm_rf SHOES_APP_TEMPLATE_ZIP
+      zipfile = ::Shoes::Package::ZipDirectory.new(SHOES_APP_TEMPLATE, SHOES_APP_TEMPLATE_ZIP)
+      zipfile.write
+    end
   end
 
   desc "Inject a JAR into an APP template"
