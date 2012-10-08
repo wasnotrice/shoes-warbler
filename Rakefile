@@ -4,9 +4,10 @@ require 'rake/clean'
 require 'ant'
 require 'yaml'
 require 'shoes/package/configuration'
+require 'shoes/swt/package/app'
 
 DEPS = FileList['vendor/*']
-CLEAN.include '*.app', '*.jar'
+CLEAN.include '*.app', '*.jar', 'pkg'
 CLEAN.exclude 'Shoes Template.app'
 CONFIG = Shoes::Package::Configuration.new(YAML.load(File.open 'app.yaml'))
 APP = "#{CONFIG.name}.app"
@@ -33,6 +34,10 @@ task :app => 'app:inject'
 
 namespace :app do
   namespace :template do
+    task :extract do
+      Shoes::Swt::Package::App.new(CONFIG).extract_template
+    end
+
     desc "Package a JAR as an APP (only available on OS X)"
     task :generate => :jar do
       fail "Only available on OS X" unless RUBY_PLATFORM =~ /darwin/

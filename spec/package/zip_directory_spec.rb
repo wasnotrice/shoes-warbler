@@ -5,9 +5,10 @@ require 'shoes/package/zip_directory'
 
 describe Shoes::Package::ZipDirectory do
   subject { Shoes::Package::ZipDirectory.new input_dir, output_file }
-  include_context 'zip'
 
   context "output file" do
+    include_context 'zip'
+
     it "exists" do
       output_file.should exist
     end
