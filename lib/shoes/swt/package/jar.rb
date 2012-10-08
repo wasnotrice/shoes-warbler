@@ -13,14 +13,19 @@ module Shoes
           end
         end
 
-        def package(path = default_path)
+        def package(dir = default_dir)
           @jar.apply @config
-          @jar.create path.to_s
-          path.to_s
+          path = File.join(dir.to_s, filename)
+          @jar.create path
+          path
         end
 
-        def default_path
-          File.join('pkg', "#{@config.jar_name}.#{@config.jar_extension}")
+        def default_dir
+          'pkg'
+        end
+
+        def filename
+          "#{@config.jar_name}.#{@config.jar_extension}"
         end
       end
     end

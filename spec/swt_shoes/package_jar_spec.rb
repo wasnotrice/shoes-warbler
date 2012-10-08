@@ -13,7 +13,7 @@ describe Shoes::Swt::Package::Jar do
       output_dir.rmtree if output_dir.exist?
       output_dir.mkpath
       Dir.chdir app_dir do
-        @jar_path = subject.package(output_file)
+        @jar_path = subject.package(output_dir)
       end
     end
 
@@ -28,6 +28,7 @@ describe Shoes::Swt::Package::Jar do
       @jar_path.should eq(output_file.to_s)
     end
 
-    its(:default_path) { should eq(output_file.relative_path_from(app_dir).to_s) }
+    its(:default_dir) { should eq('pkg') }
+    its(:filename) { should eq(jar_name) }
   end
 end
