@@ -1,3 +1,6 @@
 /*.jar
 *.app
 .DS_Store
+
+# Spec artifacts
+spec/pkg

@@ -11,6 +11,7 @@ describe Shoes::Swt::Package::App do
   let(:app_name) { 'Sugar Clouds.app' }
   let(:output_file) { Pathname.new(output_dir.join app_name) }
   let(:config) { Shoes::Package::Configuration.new options }
+  let(:launcher) { output_file.join('Contents', 'MacOS', 'JavaAppLauncher') }
   subject { Shoes::Swt::Package::App.new config } 
 
   context "default" do
@@ -26,22 +27,23 @@ describe Shoes::Swt::Package::App do
 
   context "when creating a .app" do
     before :all do
+      output_dir.rmtree if output_dir.exist?
       output_dir.mkpath
       Dir.chdir spec_dir do
         subject.package
       end
     end
 
-    after :all do
-      #FileUtils.rm_rf output_dir
-    end
-
     it "creates a .app" do
       output_file.should exist
     end
 
-    it "includes application launcher" do
-      output_file.join('Contents', 'MacOS', 'JavaAppLauncher').should exist
+    it "includes launcher" do
+      launcher.should exist
+    end
+
+    it "makes launcher executable" do
+      launcher.should be_executable
     end
   end
 end

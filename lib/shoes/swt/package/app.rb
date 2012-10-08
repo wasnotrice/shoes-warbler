@@ -46,10 +46,15 @@ module Shoes
             entry.extract(p)
           end
           mv package_dir.join(extracted_app.basename), app_path
+          executable_path.chmod 0755
         end
 
         def app_path
           package_dir.join("#{config.name}.app")
+        end
+        
+        def executable_path
+          app_path.join('Contents', 'MacOS', 'JavaAppLauncher')
         end
       end
     end
