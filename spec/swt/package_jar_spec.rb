@@ -12,7 +12,7 @@ describe Shoes::Swt::Package::Jar do
     before :all do
       output_dir.rmtree if output_dir.exist?
       output_dir.mkpath
-      Dir.chdir spec_dir.join('support') do
+      Dir.chdir app_dir do
         subject.package(output_file)
       end
     end

@@ -17,12 +17,12 @@ describe Shoes::Swt::Package::App do
 
   context "default" do
     it "package dir is {pwd}/pkg" do
-      Dir.chdir spec_dir do
-        subject.default_package_dir.should eq(spec_dir.join('pkg'))
+      Dir.chdir app_dir do
+        subject.default_package_dir.should eq(app_dir.join 'pkg')
       end
     end
 
-    its(:template_path) { should eq(spec_dir.parent.join('static', 'package-template-app.zip')) }
+    its(:template_path) { should eq(spec_dir.parent.join('static/package-template-app.zip')) }
     its(:template_path) { should exist }
   end
 
@@ -30,7 +30,7 @@ describe Shoes::Swt::Package::App do
     before :all do
       output_dir.rmtree if output_dir.exist?
       output_dir.mkpath
-      Dir.chdir spec_dir do
+      Dir.chdir app_dir do
         subject.package
       end
     end

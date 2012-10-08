@@ -38,6 +38,7 @@ module Shoes
           extract_template
           inject_icon
           inject_config
+          #inject_jar
         end
 
         def extract_template

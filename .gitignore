@@ -3,4 +3,4 @@
 .DS_Store
 
 # Spec artifacts
-spec/pkg
+spec/test_app/pkg

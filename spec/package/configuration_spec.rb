@@ -61,15 +61,15 @@ describe Shoes::Package::Configuration do
     
     describe "#icon" do
       it 'has osx' do
-        subject.icons[:osx].should eq('support/boots.icns')
+        subject.icons[:osx].should eq('img/boots.icns')
       end
 
       it 'has gtk' do
-        subject.icons[:gtk].should eq('support/boots_512x512x32.png')
+        subject.icons[:gtk].should eq('img/boots_512x512x32.png')
       end
 
       it 'has win32' do
-        subject.icons[:win32].should eq('support/boots.ico')
+        subject.icons[:win32].should eq('img/boots.ico')
       end
     end
 
