@@ -87,4 +87,29 @@ describe Shoes::Package::Configuration do
       subject.custom.should eq('my custom feature')
     end
   end
+
+  context "auto-loading" do
+    include_context 'config'
+
+    context "without a path" do
+      it "looks for 'app.yaml' in current directory" do
+        Dir.chdir config_filename.parent do
+          config = Shoes::Package::Configuration.load
+          config.shortname.should eq('sweet-nebulae')
+        end
+      end
+
+      it "blows up if it can't find the file" do
+        Dir.chdir File.dirname(__FILE__) do
+          lambda { config = Shoes::Package::Configuration.load }.should raise_error
+        end
+      end
+    end
+
+    context "with a path" do
+      it "uses the path" do
+        pending "not implemented"
+      end
+    end
+  end
 end

@@ -38,7 +38,11 @@ module Shoes
           extract_template
           inject_icon
           inject_config
-          #inject_jar
+          #jar = @jar.package(package_dir)
+          #inject_jar jar
+        end
+
+        def inject_jar(jar)
         end
 
         def extract_template

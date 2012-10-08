@@ -13,6 +13,14 @@ module Shoes
     # after initialization, dump it with #to_hash, make your changes,
     # and instantiate a new object.
     class Configuration
+      # Convenience method for loading config from a file.
+      #
+      # @param [String] file the filename to load
+      def self.load(file = 'app.yaml')
+        raise IOError, "Couldn't find #{file} at #{File.expand_path(file)}" unless File.exist?(file)
+        new YAML.load(File.open file)
+      end
+
       # @param [Hash] config user options
       def initialize(config={})
         @config = {
