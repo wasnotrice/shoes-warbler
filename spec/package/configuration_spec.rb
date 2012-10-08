@@ -1,5 +1,4 @@
 require 'shoes/package/configuration'
-require 'yaml'
 
 describe Shoes::Package::Configuration do
   context "defaults" do
@@ -46,8 +45,7 @@ describe Shoes::Package::Configuration do
   end
 
   context "with options" do
-    let(:config_filename) { File.expand_path '../../support/app.yaml', __FILE__ }
-    let(:options) { YAML.load(File.read config_filename) }
+    include_context 'config'
     subject { Shoes::Package::Configuration.new options }
 
     its(:name) { should eq('Sugar Clouds') }
@@ -86,7 +84,6 @@ describe Shoes::Package::Configuration do
 
     it "incorporates custom features" do
       subject.custom.should eq('my custom feature')
-
     end
   end
 end

@@ -1,12 +1,6 @@
 require 'pathname'
 
-module ZipHelpers
-  # dir = Pathname.new('spec/support/zip')
-  # dir_as_zip_entry_name(dir) #=> <Pathname:'/path/to/spec/support/zip/'>
-  def add_trailing_slash(dir)
-    dir.to_s + "/"
-  end
-
+module PackageHelpers
   # need these values from a context block, so let doesn't work
   def spec_dir
     Pathname.new(__FILE__).parent
@@ -14,6 +8,15 @@ module ZipHelpers
 
   def input_dir
     spec_dir.join 'support', 'zip'
+  end
+end
+
+module ZipHelpers
+  include PackageHelpers
+  # dir = Pathname.new('spec/support/zip')
+  # add_trailing_slash(dir) #=> '/path/to/spec/support/zip/'
+  def add_trailing_slash(dir)
+    dir.to_s + "/"
   end
 
   def relative_input_paths(from_dir)
@@ -24,5 +27,9 @@ module ZipHelpers
       relative_path
     end
   end
+end
+
+Pathname.glob(Pathname.new(__FILE__).parent.join('support/**/shared*.rb')).each do |f|
+  require f.to_s
 end
 

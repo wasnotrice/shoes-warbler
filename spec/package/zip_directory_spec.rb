@@ -3,8 +3,6 @@ require 'support/shared_zip'
 require 'fileutils'
 require 'shoes/package/zip_directory'
 
-include ZipHelpers
-
 describe Shoes::Package::ZipDirectory do
   subject { Shoes::Package::ZipDirectory.new input_dir, output_file }
   include_context 'zip'
