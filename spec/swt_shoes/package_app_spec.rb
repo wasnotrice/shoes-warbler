@@ -13,6 +13,7 @@ describe Shoes::Swt::Package::App do
   let(:config) { Shoes::Package::Configuration.new options }
   let(:launcher) { output_file.join('Contents/MacOS/JavaAppLauncher') }
   let(:icon)  { output_file.join('Contents/Resources/boots.icns') }
+  let(:jar) { output_file.join('Contents/Java/sweet-nebulae.jar42') }
   subject { Shoes::Swt::Package::App.new config } 
 
   context "default" do
@@ -53,6 +54,10 @@ describe Shoes::Swt::Package::App do
 
     it "injects icon" do
       icon.should exist
+    end
+
+    it "injects jar" do
+      jar.should exist
     end
 
     describe "Info.plist" do
