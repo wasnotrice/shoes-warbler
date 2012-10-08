@@ -45,5 +45,38 @@ describe Shoes::Swt::Package::App do
     it "makes launcher executable" do
       launcher.should be_executable
     end
+
+    it "injects icon" do
+      pending "move from Rakefile"
+      icon.should exist
+    end
+
+    describe "Info.plist" do
+      #pending "move from Rakefile"
+      require 'plist'
+      before :all do
+        @plist = Plist.parse_xml(output_file.join 'Contents/Info.plist')
+      end
+
+      it "sets identifier" do
+        @plist['CFBundleIdentifier'].should eq('com.hackety.shoes.sweet-nebulae')
+      end
+
+      it "sets display name" do
+        @plist['CFBundleDisplayName'].should eq('Sugar Clouds')
+      end
+
+      it "sets bundle name" do
+        @plist['CFBundleName'].should eq('Sugar Clouds')
+      end
+
+      it "sets version" do
+        @plist['CFBundleVersion'].should eq('0.0.1')
+      end
+    end
+
+    it "injects .jar" do
+      pending "move from Rakefile"
+    end
   end
 end

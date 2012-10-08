@@ -1,6 +1,7 @@
 require 'shoes/package/configuration'
 require 'shoes/package/zip_directory'
 require 'fileutils'
+require 'plist'
 
 module Shoes
   module Swt
@@ -35,6 +36,7 @@ module Shoes
 
         def package
           extract_template
+          inject_config
         end
 
         def extract_template
@@ -47,6 +49,17 @@ module Shoes
           end
           mv package_dir.join(extracted_app.basename), app_path
           executable_path.chmod 0755
+        end
+
+        def inject_config
+          plist = app_path.join 'Contents/Info.plist'
+          template = Plist.parse_xml(plist)
+          template['CFBundleIdentifier'] = "com.hackety.shoes.#{config.shortname}"
+          template['CFBundleDisplayName'] = config.name
+          template['CFBundleName'] = config.name
+          template['CFBundleVersion'] = config.version
+          template['CFBundleIconFile'] = Pathname.new(config.icons[:osx]).basename
+          File.open(plist, 'w') { |f| f.write template.to_plist }
         end
 
         def app_path

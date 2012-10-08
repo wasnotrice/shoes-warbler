@@ -83,18 +83,6 @@ namespace :app do
     rm_rf "#{jar_dir}/*"
     cp JAR, "#{jar_dir}/"
   end
-
-  task :inject_config => [:copy_template, :inject_icon] do
-    require 'plist'
-    plist = "#{APP}/Contents/Info.plist"
-    template = Plist.parse_xml(plist)
-    template['CFBundleIdentifier'] = "com.hackety.shoes.#{CONFIG.shortname}"
-    template['CFBundleDisplayName'] = CONFIG.name
-    template['CFBundleName'] = CONFIG.name
-    template['CFBundleVersion'] = CONFIG.version
-    template['CFBundleIconFile'] = APP_ICON_OSX.pathmap('%f')
-    File.open(plist, 'w') { |f| f.write template.to_plist }
-  end
 end
 
 desc "Package as a JAR"
