@@ -1,0 +1,5 @@
+require 'shoes'
+Shoes.configuration.backend = :swt
+Shoes.app do
+  banner "Hello world"
+end

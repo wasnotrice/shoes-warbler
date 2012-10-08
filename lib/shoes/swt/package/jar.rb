@@ -10,9 +10,9 @@ module Shoes
           @config = Warbler::Config.new
         end
 
-        def package(config = @config)
-          @jar.apply config
-          @jar.create config
+        def package(path)
+          @jar.apply @config
+          @jar.create path.to_s
         end
       end
     end
