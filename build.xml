@@ -5,14 +5,15 @@
     classpath="vendor/appbundler-1.0.jar" />
   <target name="shoes-app">
     <bundleapp outputdirectory="."
-      name="Example Shoes App"
-      displayname="Example Shoes App"
+      name="${env.SHOES_APP_NAME}"
+      displayname="${env.SHOES_APP_NAME}"
       identifier="com.hackety.shoes.exampleapp"
       shortversion="1.0"
+      icon="${env.SHOES_APP_ICON}"
       applicationCategory="public.app-category.entertainment"
       mainclassname="JarMain">
-      <runtime dir="${env.JAVA_HOME}"/>
-      <classpath file="${env.SHOES_APP_NAME}.jar"/>
+      <runtime dir="${env.JDK_HOME}"/>
+      <classpath file="${env.SHOES_JAR_NAME}.jar"/>
       <option value="-Dapple.laf.useScreenMenuBar=true"/>
       <option value="-Djruby.compat.version=1.9"/>
       <option value="-XstartOnFirstThread"/>

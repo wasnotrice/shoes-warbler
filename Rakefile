@@ -14,8 +14,9 @@ APP = "#{CONFIG.name}.app"
 APP_EXECUTABLE = "#{APP}/Contents/MacOs/JavaAppLauncher"
 APP_ICON_OSX = CONFIG.icons[:osx].pathmap "#{APP}/Contents/Resources/%f"
 JAR = "#{CONFIG.shortname}.jar"
-SHOES_APP_TEMPLATE = ENV['SHOES_APP_TEMPLATE'] || "templates/Shoes Template.app"
+SHOES_APP_TEMPLATE = ENV['SHOES_APP_TEMPLATE'] || "static/shoes-app-template.app"
 SHOES_APP_TEMPLATE_ZIP = "#{SHOES_APP_TEMPLATE}.zip"
+SHOES_APP_TEMPLATE_NAME = "Example Shoes App"
 
 desc "Build and install custom dependencies"
 task :deps do
@@ -40,12 +41,15 @@ namespace :app do
 
     desc "Package a JAR as an APP (only available on OS X)"
     task :generate => :jar do
-      fail "Only available on OS X" unless RUBY_PLATFORM =~ /darwin/
-      ENV['JAVA_HOME'] = "/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home"
-      ENV['SHOES_APP_NAME'] = CONFIG.shortname
+      fail "Only available on OS X" unless RbConfig::CONFIG['host_os'] =~ /darwin/
+      #ENV['JAVA_HOME'] = "/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home"
+      ENV['JDK_HOME'] = "/Library/Java/JavaVirtualMachines/1.7.0.jdk/Contents/Home"
+      ENV['SHOES_JAR_NAME'] = CONFIG.shortname
+      ENV['SHOES_APP_NAME'] = SHOES_APP_TEMPLATE_NAME
+      ENV['SHOES_APP_ICON'] = CONFIG.icons[:osx]
       ant '-f build.xml shoes-app'
-      mv SHOES_APP_TEMPLATE, SHOES_APP_TEMPLATE.pathmap('%p.backup')
-      mv 'Test.app', SHOES_APP_TEMPLATE
+      mv SHOES_APP_TEMPLATE, SHOES_APP_TEMPLATE.pathmap('%p.backup') if File.exist?(SHOES_APP_TEMPLATE)
+      mv "#{SHOES_APP_TEMPLATE_NAME}.app", SHOES_APP_TEMPLATE
     end
 
     task :zip => SHOES_APP_TEMPLATE_ZIP

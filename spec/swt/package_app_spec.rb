@@ -56,7 +56,6 @@ describe Shoes::Swt::Package::App do
     end
 
     describe "Info.plist" do
-      #pending "move from Rakefile"
       require 'plist'
       before :all do
         @plist = Plist.parse_xml(output_file.join 'Contents/Info.plist')
