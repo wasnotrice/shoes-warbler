@@ -11,7 +11,8 @@ describe Shoes::Swt::Package::App do
   let(:app_name) { 'Sugar Clouds.app' }
   let(:output_file) { Pathname.new(output_dir.join app_name) }
   let(:config) { Shoes::Package::Configuration.new options }
-  let(:launcher) { output_file.join('Contents', 'MacOS', 'JavaAppLauncher') }
+  let(:launcher) { output_file.join('Contents/MacOS/JavaAppLauncher') }
+  let(:icon)  { output_file.join('Contents/Resources/boots.icns') }
   subject { Shoes::Swt::Package::App.new config } 
 
   context "default" do
@@ -46,8 +47,11 @@ describe Shoes::Swt::Package::App do
       launcher.should be_executable
     end
 
+    it "deletes generic icon" do
+      icon.parent.join('GenericApp.icns').should_not exist 
+    end
+
     it "injects icon" do
-      pending "move from Rakefile"
       icon.should exist
     end
 
@@ -68,6 +72,10 @@ describe Shoes::Swt::Package::App do
 
       it "sets bundle name" do
         @plist['CFBundleName'].should eq('Sugar Clouds')
+      end
+
+      it "sets icon" do
+        @plist['CFBundleIconFile'].should eq('boots.icns')
       end
 
       it "sets version" do

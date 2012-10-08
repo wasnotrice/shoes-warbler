@@ -36,6 +36,7 @@ module Shoes
 
         def package
           extract_template
+          inject_icon
           inject_config
         end
 
@@ -58,8 +59,15 @@ module Shoes
           template['CFBundleDisplayName'] = config.name
           template['CFBundleName'] = config.name
           template['CFBundleVersion'] = config.version
-          template['CFBundleIconFile'] = Pathname.new(config.icons[:osx]).basename
+          template['CFBundleIconFile'] = Pathname.new(config.icons[:osx]).basename.to_s
           File.open(plist, 'w') { |f| f.write template.to_plist }
+        end
+
+        def inject_icon
+          resources_dir = app_path.join('Contents/Resources')
+          rm_rf resources_dir.join('GenericApp.icns')
+          icon_path = Pathname.new(config.icons[:osx])
+          cp icon_path, resources_dir.join(icon_path.basename)
         end
 
         def app_path

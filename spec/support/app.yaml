@@ -8,9 +8,9 @@ gems: rspec
 version: 0.0.1
 release: Mindfully
 icons:
-  osx: path/to/custom/App.icns
-  gtk: path/to/custom/app.png
-  win32: path/to/custom/App.ico
+  osx: support/boots.icns
+  gtk: support/boots.png
+  win32: support/boots.ico
 dmg:
   ds_store: path/to/custom/.DS_Store
   background: path/to/custom/background.png
