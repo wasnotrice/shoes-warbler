@@ -1,10 +1,13 @@
 require 'shoes/package/configuration'
 require 'shoes/package/zip_directory'
+require 'fileutils'
 
 module Shoes
   module Swt
     module Package
       class App
+        include FileUtils
+
         # @param [Shoes::Package::Configuration] config user
         #   configuration
         def initialize(config, template_path)
@@ -14,8 +17,7 @@ module Shoes
         end
 
         def package(path = @default_package_path)
-          require 'fileutils'
-          FileUtils.touch path
+          touch path
         end
 
         def copy_template
