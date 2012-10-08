@@ -9,7 +9,7 @@ version: 0.0.1
 release: Mindfully
 icons:
   osx: support/boots.icns
-  gtk: support/boots.png
+  gtk: support/boots_512x512x32.png
   win32: support/boots.ico
 dmg:
   ds_store: path/to/custom/.DS_Store
