@@ -108,7 +108,10 @@ describe Shoes::Package::Configuration do
 
     context "with a path" do
       it "uses the path" do
-        pending "not implemented"
+        Dir.chdir File.dirname(__FILE__) do
+          config = Shoes::Package::Configuration.load(config_filename)
+          config.shortname.should eq('sweet-nebulae')
+        end
       end
     end
   end
