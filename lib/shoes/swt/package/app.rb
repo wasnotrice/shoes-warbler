@@ -1,5 +1,6 @@
 require 'shoes/package/configuration'
 require 'shoes/package/zip_directory'
+require 'shoes/swt/package/jar'
 require 'fileutils'
 require 'plist'
 
@@ -18,6 +19,7 @@ module Shoes
           root = Pathname.new(__FILE__).parent.parent.parent.parent.parent
           @default_template_path = root.join('static', 'package-template-app.zip')
           @template_path = default_template_path
+          @jar = Jar.new(@config)
         end
 
         # @return [Pathname] default package directory: {pwd}/pkg/
@@ -38,11 +40,19 @@ module Shoes
           extract_template
           inject_icon
           inject_config
-          #jar = @jar.package(package_dir)
-          #inject_jar jar
+          jar_path = ensure_jar_path
+          inject_jar jar_path
         end
 
-        def inject_jar(jar)
+        def ensure_jar_path
+          path = package_dir.join(@jar.filename)
+          @jar.package(package_dir) unless File.exist?(path)
+        end
+
+        def inject_jar(jar_path)
+          jar_dir = app_path.join('Contents/Java')
+          rm_rf "#{jar_dir}/*"
+          cp jar_path, jar_dir
         end
 
         def extract_template
@@ -80,7 +90,7 @@ module Shoes
         end
         
         def executable_path
-          app_path.join('Contents', 'MacOS', 'JavaAppLauncher')
+          app_path.join('Contents/MacOS/JavaAppLauncher')
         end
       end
     end

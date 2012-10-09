@@ -5,9 +5,9 @@ module Shoes
   module Swt
     module Package
       class Jar
-        def initialize
+        def initialize(config = nil)
           @jar = Warbler::Jar.new
-          @shoes_config = ::Shoes::Package::Configuration.load
+          @shoes_config = config || ::Shoes::Package::Configuration.load
           @config = Warbler::Config.new do |config|
             # Customize Warbler config here
           end

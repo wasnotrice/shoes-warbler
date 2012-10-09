@@ -13,7 +13,7 @@ describe Shoes::Swt::Package::App do
   let(:config) { Shoes::Package::Configuration.new options }
   let(:launcher) { output_file.join('Contents/MacOS/JavaAppLauncher') }
   let(:icon)  { output_file.join('Contents/Resources/boots.icns') }
-  let(:jar) { output_file.join('Contents/Java/sweet-nebulae.jar42') }
+  let(:jar) { output_file.join('Contents/Java/sweet-nebulae.jar') }
   subject { Shoes::Swt::Package::App.new config } 
 
   context "default" do
@@ -85,10 +85,6 @@ describe Shoes::Swt::Package::App do
       it "sets version" do
         @plist['CFBundleVersion'].should eq('0.0.1')
       end
-    end
-
-    it "injects .jar" do
-      pending "move from Rakefile"
     end
   end
 end
