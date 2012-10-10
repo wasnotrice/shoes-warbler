@@ -60,6 +60,11 @@ describe Shoes::Swt::Package::App do
       jar.should exist
     end
 
+    it "removes any extraneous jars" do
+      jar_dir_contents = output_file.join("Contents/Java").children
+      jar_dir_contents.reject {|f| f == jar }.should be_empty
+    end
+
     describe "Info.plist" do
       require 'plist'
       before :all do

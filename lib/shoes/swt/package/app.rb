@@ -49,10 +49,16 @@ module Shoes
           jar.package(package_dir) unless File.exist?(path)
         end
 
+        # Injects JAR into APP. The JAR should be the only item in the
+        # Contents/Java directory. If this directory contains more than one
+        # JAR, the "first" one gets run, which may not be what we want.
+        #
+        # @param [Pathname, String] jar_path the location of the JAR to inject
         def inject_jar(jar_path)
           jar_dir = app_path.join('Contents/Java')
-          rm_rf "#{jar_dir}/*"
-          cp jar_path, jar_dir
+          jar_dir.rmtree
+          jar_dir.mkdir
+          cp Pathname.new(jar_path), jar_dir
         end
 
         def extract_template
@@ -88,7 +94,7 @@ module Shoes
         def app_path
           package_dir.join("#{config.name}.app")
         end
-        
+
         def executable_path
           app_path.join('Contents/MacOS/JavaAppLauncher')
         end
