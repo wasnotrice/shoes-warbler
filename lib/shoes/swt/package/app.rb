@@ -62,11 +62,11 @@ module Shoes
         end
 
         def extract_template
-          extracted_app = nil 
+          extracted_app = nil
           Zip::ZipFile.new(template_path).each do |entry|
             extracted_app = template_path.join(entry.name) if Pathname.new(entry.name).extname == '.app'
             p = package_dir.join(entry.name)
-            p.dirname.mkpath 
+            p.dirname.mkpath
             entry.extract(p)
           end
           mv package_dir.join(extracted_app.basename), app_path
