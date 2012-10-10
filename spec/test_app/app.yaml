@@ -1,8 +1,8 @@
 name: Sugar Clouds
 shortname: sweet-nebulae
 ignore:
-  - vendor/**/*
-  - vendor
+  - pkg/**/*
+  - pkg
 run: bin/hello_world
 gems: rspec
 version: 0.0.1
