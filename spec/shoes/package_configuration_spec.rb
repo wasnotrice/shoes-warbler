@@ -47,6 +47,7 @@ describe Shoes::Package::Configuration do
 
   context "with options" do
     include_context 'config'
+    let(:options) { YAML.load(File.read config_filename) }
     subject { Shoes::Package::Configuration.new options }
 
     its(:name) { should eq('Sugar Clouds') }

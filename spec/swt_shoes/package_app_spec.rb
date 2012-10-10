@@ -9,8 +9,8 @@ describe Shoes::Swt::Package::App do
   include_context 'package'
 
   let(:app_name) { 'Sugar Clouds.app' }
-  let(:output_file) { Pathname.new(output_dir.join app_name) }
-  let(:config) { Shoes::Package::Configuration.new options }
+  let(:output_file) { output_dir.join app_name }
+  let(:config) { Shoes::Package::Configuration.load config_filename}
   let(:launcher) { output_file.join('Contents/MacOS/JavaAppLauncher') }
   let(:icon)  { output_file.join('Contents/Resources/boots.icns') }
   let(:jar) { output_file.join('Contents/Java/sweet-nebulae.jar') }
