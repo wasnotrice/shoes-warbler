@@ -28,6 +28,10 @@ describe Shoes::Swt::Package::Jar do
       @jar_path.should eq(output_file.to_s)
     end
 
+    it "creates .jar smaller than 40MB" do
+      File.size(output_file).should be < 40 * 1024 * 1024
+    end
+
     its(:default_dir) { should eq('pkg') }
     its(:filename) { should eq(jar_name) }
   end

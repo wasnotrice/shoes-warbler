@@ -19,7 +19,6 @@ module Shoes
           root = Pathname.new(__FILE__).parent.parent.parent.parent.parent
           @default_template_path = root.join('static', 'package-template-app.zip')
           @template_path = default_template_path
-          @jar = Jar.new(@config)
         end
 
         # @return [Pathname] default package directory: {pwd}/pkg/
@@ -40,13 +39,14 @@ module Shoes
           extract_template
           inject_icon
           inject_config
-          jar_path = ensure_jar_path
+          jar_path = ensure_jar_exists
           inject_jar jar_path
         end
 
-        def ensure_jar_path
-          path = package_dir.join(@jar.filename)
-          @jar.package(package_dir) unless File.exist?(path)
+        def ensure_jar_exists
+          jar = Jar.new(@config)
+          path = package_dir.join(jar.filename)
+          jar.package(package_dir) unless File.exist?(path)
         end
 
         def inject_jar(jar_path)
