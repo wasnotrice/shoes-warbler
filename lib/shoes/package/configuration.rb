@@ -23,7 +23,7 @@ module Shoes
 
       # @param [Hash] config user options
       def initialize(config={})
-        @config = {
+        defaults = {
           name: 'Shoes App',
           version: '0.0.0',
           release: 'Rookie',
@@ -37,12 +37,12 @@ module Shoes
             background: 'path/to/default/background.png'
           }
         }
-        @config[:shortname] = @config[:name].downcase.gsub(/\W+/, '')
 
         # Overwrite defaults with supplied config
-        @config = config.inject(@config) { |c, (k, v)| set c, k, v }
+        @config = config.inject(defaults) { |c, (k, v)| set_symbol_key c, k, v }
 
         # Ensure that we always have what we need
+        @config[:shortname] ||= @config[:name].downcase.gsub(/\W+/, '')
         [:ignore, :gems].each { |k| @config[k] = Array(@config[k]) }
         @config[:gems] << 'shoes'
 
@@ -66,14 +66,14 @@ module Shoes
 
       private
       # Ensure symbol keys, even in nested hashes
-      # 
+      #
       # @param [Hash] config the hash to set (key: value) on
       # @param [#to_sym] k the key
       # @param [Object] v the value
       # @return [Hash] an updated hash
-      def set(config, k, v)
+      def set_symbol_key(config, k, v)
         if v.kind_of? Hash
-          config[k.to_sym] = v.inject({}) { |hash, (k, v)| set(hash, k, v) }
+          config[k.to_sym] = v.inject({}) { |hash, (k, v)| set_symbol_key(hash, k, v) }
         else
           config[k.to_sym] = v
         end

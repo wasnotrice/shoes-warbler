@@ -13,7 +13,7 @@ describe Shoes::Package::Configuration do
     its(:release) { should eq('Rookie') }
     its(:icons) { should be_an_instance_of(Hash) }
     its(:dmg) { should be_an_instance_of(Hash) }
-    
+
     describe "#icon" do
       it 'has osx' do
         subject.icons[:osx].should eq('path/to/default/App.icns')
@@ -59,7 +59,7 @@ describe Shoes::Package::Configuration do
     its(:release) { should eq('Mindfully') }
     its(:icons) { should be_an_instance_of(Hash) }
     its(:dmg) { should be_an_instance_of(Hash) }
-    
+
     describe "#icon" do
       it 'has osx' do
         subject.icons[:osx].should eq('img/boots.icns')
@@ -87,6 +87,14 @@ describe Shoes::Package::Configuration do
     it "incorporates custom features" do
       subject.custom.should eq('my custom feature')
     end
+  end
+
+  context "with name, but without explicit shortname" do
+    let(:options) { {:name => "Sugar Clouds"} }
+    subject { Shoes::Package::Configuration.new options }
+
+    its(:name) { should eq("Sugar Clouds") }
+    its(:shortname) { should eq("sugarclouds") }
   end
 
   context "auto-loading" do
