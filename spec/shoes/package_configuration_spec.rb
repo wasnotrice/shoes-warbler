@@ -52,7 +52,7 @@ describe Shoes::Package::Configuration do
 
     its(:name) { should eq('Sugar Clouds') }
     its(:shortname) { should eq('sweet-nebulae') }
-    its(:ignore) { should include('pkg/**/*') }
+    its(:ignore) { should include('pkg') }
     its(:gems) { should include('rspec') }
     its(:gems) { should include('shoes') }
     its(:version) { should eq('0.0.1') }

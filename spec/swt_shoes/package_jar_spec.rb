@@ -32,6 +32,11 @@ describe Shoes::Swt::Package::Jar do
       File.size(output_file).should be < 40 * 1024 * 1024
     end
 
+    it "excludes directories recursively" do
+      jar = Zip::ZipFile.new(output_file)
+      jar.entries.should_not include("dir_to_ignore/file_to_ignore")
+    end
+
     its(:default_dir) { should eq('pkg') }
     its(:filename) { should eq(jar_name) }
   end

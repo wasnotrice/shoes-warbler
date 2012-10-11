@@ -14,14 +14,11 @@ shortname: sugarclouds
 
 # Files to ignore when bundling the app. Should be an array.
 ignore:
-  - 'vendor/**/*'
   - 'vendor'
-  - 'lib/**/*'
   - 'lib'
-  - 'templates/**/*'
-  - 'templates'
-  - '*.app/**/*'
+  - 'static'
   - '*.app'
+  - 'spec'
 
 # How to run the app
 run: bin/hello_from_warbler
