@@ -5,26 +5,36 @@ module Shoes
   module Swt
     module Package
       class Jar
+        # @param [Shoes::Package::Configuration] config user configuration
         def initialize(config = nil)
-          @jar = Warbler::Jar.new
           @shoes_config = config || ::Shoes::Package::Configuration.load
-          @config = Warbler::Config.new do |config|
-            config.jar_name = @shoes_config.shortname
-            config.pathmaps.application = ['shoes-app/%p']
-            specs = @shoes_config.gems.map { |g| Gem::Specification.find_by_name(g) }
-            dependencies = specs.map { |s| s.runtime_dependencies }.flatten
-            (specs + dependencies).uniq.each { |g| config.gems << g }
-            config.excludes.add FileList[*@shoes_config.ignore].pathmap(config.pathmaps.application.first)
+          Dir.chdir @shoes_config.working_dir do
+            @config = Warbler::Config.new do |config|
+              config.jar_name = @shoes_config.shortname
+              config.pathmaps.application = ['shoes-app/%p']
+              specs = @shoes_config.gems.map { |g| Gem::Specification.find_by_name(g) }
+              dependencies = specs.map { |s| s.runtime_dependencies }.flatten
+              (specs + dependencies).uniq.each { |g| config.gems << g }
+              ignore = @shoes_config.ignore.map do |f|
+                path = f.to_s
+                children = Dir.glob("#{path}/**/*") if File.directory?(path)
+                [path, *children]
+              end.flatten
+              config.excludes.add FileList.new(ignore).pathmap(config.pathmaps.application.first)
+            end
+            @config.extend ShoesWarblerConfig
+            @config.run = @shoes_config.run.split(/\s/).first
           end
-          @config.extend ShoesWarblerConfig
-          @config.run = @shoes_config.run.split(/\s/).first
         end
 
         def package(dir = default_dir)
-          @jar.apply @config
-          path = File.join(dir.to_s, filename)
-          @jar.create path
-          path
+          Dir.chdir @shoes_config.working_dir do
+            jar = Warbler::Jar.new
+            jar.apply @config
+            path = File.join(dir.to_s, filename)
+            jar.create path
+            path
+          end
         end
 
         def default_dir

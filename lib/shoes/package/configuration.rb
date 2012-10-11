@@ -1,3 +1,5 @@
+require 'pathname'
+
 module Shoes
   module Package
     # Configuration for Shoes packagers. Example usage:
@@ -16,13 +18,14 @@ module Shoes
       # Convenience method for loading config from a file.
       #
       # @param [String] file the filename to load
-      def self.load(file = 'app.yaml')
-        raise IOError, "Couldn't find #{file} at #{File.expand_path(file)}" unless File.exist?(file)
-        new YAML.load(File.open file)
+      def self.load(filename = 'app.yaml')
+        file = Pathname.new(filename)
+        raise IOError, "Couldn't find #{file} at #{file.expand_path}" unless File.exist?(file)
+        new YAML.load(file.open), file.dirname
       end
 
       # @param [Hash] config user options
-      def initialize(config={})
+      def initialize(config = {}, working_dir = Dir.pwd)
         defaults = {
           name: 'Shoes App',
           version: '0.0.0',
@@ -53,7 +56,12 @@ module Shoes
             @config[k]
           end
         end
+
+        @working_dir = Pathname.new(working_dir)
       end
+
+      # @return [Pathname] the current working directory
+      attr_reader :working_dir
 
       def to_hash
         @config
