@@ -14,7 +14,7 @@ describe Shoes::Swt::Package::App do
   let(:launcher) { output_file.join('Contents/MacOS/JavaAppLauncher') }
   let(:icon)  { output_file.join('Contents/Resources/boots.icns') }
   let(:jar) { output_file.join('Contents/Java/sweet-nebulae.jar') }
-  subject { Shoes::Swt::Package::App.new config } 
+  subject { Shoes::Swt::Package::App.new config }
 
   context "default" do
     it "package dir is {pwd}/pkg" do
@@ -23,7 +23,7 @@ describe Shoes::Swt::Package::App do
       end
     end
 
-    its(:template_path) { should eq(spec_dir.parent.join('static/package-template-app.zip')) }
+    its(:template_path) { should eq(spec_dir.parent.join('static/shoes-app-template.zip')) }
     its(:template_path) { should exist }
   end
 

@@ -10,18 +10,17 @@ module Shoes
       class App
         include FileUtils
 
-        # @param [Shoes::Package::Configuration] config user
-        #   configuration
+        # @param [Shoes::Package::Configuration] config user configuration
         def initialize(config)
           @config = config
           @default_package_dir = Pathname.pwd.join('pkg')
           @package_dir = default_package_dir
-          root = Pathname.new(__FILE__).parent.parent.parent.parent.parent
-          @default_template_path = root.join('static', 'package-template-app.zip')
+          root = Pathname.new(__FILE__).join('../../../../..')
+          @default_template_path = root.join('static/shoes-app-template.zip')
           @template_path = default_template_path
         end
 
-        # @return [Pathname] default package directory: {pwd}/pkg/
+        # @return [Pathname] default package directory: ./pkg
         attr_reader :default_package_dir
 
         # @return [Pathname] package directory
@@ -62,6 +61,7 @@ module Shoes
         end
 
         def extract_template
+          raise IOError, "Couldn't find app template at #{template_path}." unless template_path.exist?
           extracted_app = nil
           Zip::ZipFile.new(template_path).each do |entry|
             extracted_app = template_path.join(entry.name) if Pathname.new(entry.name).extname == '.app'
@@ -85,9 +85,9 @@ module Shoes
         end
 
         def inject_icon
-          resources_dir = app_path.join('Contents/Resources')
-          rm_rf resources_dir.join('GenericApp.icns')
           icon_path = Pathname.new(config.icons[:osx])
+          raise IOError, "Couldn't find app icon at #{icon_path}" unless icon_path.exist?
+          resources_dir = app_path.join('Contents/Resources')
           cp icon_path, resources_dir.join(icon_path.basename)
         end
 
