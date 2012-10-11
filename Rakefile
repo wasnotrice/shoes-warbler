@@ -9,14 +9,19 @@ require 'shoes/swt/package/app'
 DEPS = FileList['vendor/*']
 CLEAN.include '*.app', '*.jar', 'pkg'
 CLEAN.exclude 'Shoes Template.app'
-CONFIG = Shoes::Package::Configuration.new(YAML.load(File.open 'app.yaml'))
+CLOBBER.include 'doc'
+CONFIG = Shoes::Package::Configuration.load
+PKG = 'pkg'
 APP = "#{CONFIG.name}.app"
 APP_EXECUTABLE = "#{APP}/Contents/MacOs/JavaAppLauncher"
 APP_ICON_OSX = CONFIG.icons[:osx].pathmap "#{APP}/Contents/Resources/%f"
 JAR = "#{CONFIG.shortname}.jar"
-SHOES_APP_TEMPLATE = ENV['SHOES_APP_TEMPLATE'] || "static/shoes-app-template.app"
-SHOES_APP_TEMPLATE_ZIP = "#{SHOES_APP_TEMPLATE}.zip"
+app = Shoes::Swt::Package::App.new(CONFIG)
+SHOES_APP_TEMPLATE = ENV['SHOES_APP_TEMPLATE'] ? Pathname.new(ENV['SHOES_APP_TEMPLATE']) : Pathname.new("#{app.default_template_path.basename('.zip')}.app")
+SHOES_APP_TEMPLATE_ZIP = Pathname.new("#{SHOES_APP_TEMPLATE.basename('.app')}.zip")
 SHOES_APP_TEMPLATE_NAME = "Example Shoes App"
+
+directory PKG
 
 desc "Build and install custom dependencies"
 task :deps do
@@ -32,6 +37,7 @@ task :deps do
 end
 
 task :app => 'app:inject'
+task 'app:template' => 'app:template:zip'
 
 namespace :app do
   namespace :template do
@@ -42,7 +48,9 @@ namespace :app do
     desc "Package a JAR as an APP (only available on OS X)"
     task :generate => :jar do
       fail "Only available on OS X" unless RbConfig::CONFIG['host_os'] =~ /darwin/
-      #ENV['JAVA_HOME'] = "/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home"
+      # Oracle JDK
+      #ENV['JDK_HOME'] = "/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home"
+      # OpenJDK
       ENV['JDK_HOME'] = "/Library/Java/JavaVirtualMachines/1.7.0.jdk/Contents/Home"
       ENV['SHOES_JAR_NAME'] = CONFIG.shortname
       ENV['SHOES_APP_NAME'] = SHOES_APP_TEMPLATE_NAME
@@ -53,47 +61,31 @@ namespace :app do
     end
 
     task :zip => SHOES_APP_TEMPLATE_ZIP
-    require 'shoes/package/zip_directory'
 
     file SHOES_APP_TEMPLATE_ZIP => SHOES_APP_TEMPLATE do
+      require 'shoes/package/zip_directory'
       rm_rf SHOES_APP_TEMPLATE_ZIP
       zipfile = ::Shoes::Package::ZipDirectory.new(SHOES_APP_TEMPLATE, SHOES_APP_TEMPLATE_ZIP)
       zipfile.write
     end
+
+    file SHOES_APP_TEMPLATE => 'app:template:generate'
   end
 
-  desc "Inject a JAR into an APP template"
-  task :inject => ['app:inject_jar', 'app:inject_config']
+  desc "Inject a JAR into the APP template"
+  task :inject => APP
 
-  task :copy_template => APP do
-    chmod 0755, APP_EXECUTABLE
-  end
-
-  file APP => [SHOES_APP_TEMPLATE] do |t|
-    cp_r t.prerequisites.first, t.name
-  end
-
-  task :inject_icon => APP_ICON_OSX
-
-  file APP_ICON_OSX => :copy_template do |t|
-    rm_rf APP_ICON_OSX.pathmap('%d/GenericApp.icns')
-    cp CONFIG.icons[:osx], APP_ICON_OSX
-    # Encourage Finder to reload icon
-    touch APP
-  end
-
-  task :inject_jar => [:jar, :copy_template] do
-    jar_dir = "#{APP}/Contents/Java"
-    rm_rf "#{jar_dir}/*"
-    cp JAR, "#{jar_dir}/"
+  file APP do
+    require 'shoes/swt/package/app'
+    app = Shoes::Swt::Package::App.new(CONFIG)
+    app.package
   end
 end
 
 desc "Package as a JAR"
 task :jar => JAR
 
-file JAR do
+file JAR => PKG do
   require 'shoes/swt/package/jar'
-
   Shoes::Swt::Package::Jar.new.package
 end
