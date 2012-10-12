@@ -46,6 +46,7 @@ module Shoes
           jar = Jar.new(@config)
           path = package_dir.join(jar.filename)
           jar.package(package_dir) unless File.exist?(path)
+          path
         end
 
         # Injects JAR into APP. The JAR should be the only item in the
