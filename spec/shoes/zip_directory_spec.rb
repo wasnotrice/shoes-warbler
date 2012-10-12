@@ -22,5 +22,10 @@ describe Shoes::Package::ZipDirectory do
         zip.entries.map(&:name).should include(path)
       end
     end
+
+    it "doesn't include extra files" do
+      number_of_files = Dir.glob("#{input_dir}/**/*").push(input_dir).length
+      zip.entries.length.should eq(number_of_files)
+    end
   end
 end

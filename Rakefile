@@ -66,6 +66,7 @@ namespace :app do
       rm_rf "#{APP}/Contents/Java"
       mkdir_p "#{APP}/Contents/Java"
 
+      rm_rf APP_TEMPLATE
       mv APP, APP_TEMPLATE
     end
 
@@ -87,7 +88,7 @@ namespace :app do
     end
 
     file APP_TEMPLATE => [TEMPLATES] do
-      'app:template:generate'.invoke
+      Rake::Task['app:template:generate'].invoke
     end
   end
 

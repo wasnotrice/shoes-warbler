@@ -65,6 +65,7 @@ module Shoes
           raise IOError, "Couldn't find app template at #{template_path}." unless template_path.exist?
           extracted_app = nil
           Zip::ZipFile.new(template_path).each do |entry|
+            # Fragile hack
             extracted_app = template_path.join(entry.name) if Pathname.new(entry.name).extname == '.app'
             p = package_dir.join(entry.name)
             p.dirname.mkpath
