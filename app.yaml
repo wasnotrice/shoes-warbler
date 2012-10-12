@@ -6,11 +6,11 @@
 
 # The app's full name, intended for humans. This will be the name of the thing
 # you double-click.
-name: Sugar Clouds
+name: Shoes App
 
 # A short version of the name, simplified for under-the-hood use. Defaults to
 # lowercased name, with non-word characters removed.
-shortname: sugarclouds
+shortname: shoesapp
 
 # Files to ignore when bundling the app. Should be an array.
 ignore:
