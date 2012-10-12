@@ -47,7 +47,7 @@ namespace :app do
 
     desc "Package a JAR as an APP (only available on OS X)"
     task :generate => :jar do
-      fail "Only available on OS X" unless RbConfig::CONFIG['host_os'] =~ /darwin/
+      fail "Generating app templates is only available on OS X" unless RbConfig::CONFIG['host_os'] =~ /darwin/
 
       # Oracle JDK
       #ENV['JDK_HOME'] = "/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home"
