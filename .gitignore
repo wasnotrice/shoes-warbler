@@ -3,6 +3,7 @@
 .DS_Store
 pkg
 doc
+.yardoc
 
 # Spec artifacts
 spec/test_app/pkg
