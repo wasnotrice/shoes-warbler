@@ -53,6 +53,6 @@ module Shoes
           end
         end
       end
-    end        
+    end
   end
 end
