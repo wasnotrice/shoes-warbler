@@ -80,9 +80,10 @@ namespace :app do
       rm_rf APP_TEMPLATE
     end
 
-    file APP_TEMPLATE_ZIP => APP_TEMPLATE do
+    file APP_TEMPLATE_ZIP do
       require 'shoes/package/zip_directory'
       rm_rf APP_TEMPLATE_ZIP
+      Rake::Task[APP_TEMPLATE].invoke unless File.exist?(APP_TEMPLATE)
       zipfile = ::Shoes::Package::ZipDirectory.new(APP_TEMPLATE, APP_TEMPLATE_ZIP)
       zipfile.write
     end
