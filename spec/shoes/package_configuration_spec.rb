@@ -114,12 +114,33 @@ describe Shoes::Package::Configuration do
       end
     end
 
-    context "with a path" do
-      it "uses the path" do
+    shared_examples "config with path" do
+      it "finds the config" do
         Dir.chdir File.dirname(__FILE__) do
-          config = Shoes::Package::Configuration.load(config_filename)
+          config = Shoes::Package::Configuration.load(path)
           config.shortname.should eq('sweet-nebulae')
         end
+      end
+    end
+
+    context "with an 'app.yaml'" do
+      let(:path) { config_filename }
+      it_behaves_like "config with path"
+    end
+
+    context "with a path to a directory containing an 'app.yaml'" do
+      let(:path) { config_filename.parent }
+      it_behaves_like "config with path"
+    end
+
+    context "with a path to a file that is siblings with an 'app.yaml'" do
+      let(:path) { config_filename.parent.join('sibling.rb') }
+      it_behaves_like "config with path"
+    end
+
+    context "when the file doesn't exist" do
+      it "blows up" do
+        lambda { Shoes::Package::Configuration.load('some/bogus/path') }.should raise_error
       end
     end
   end

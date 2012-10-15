@@ -17,11 +17,31 @@ module Shoes
     class Configuration
       # Convenience method for loading config from a file.
       #
-      # @param [String] file the filename to load
-      def self.load(filename = 'app.yaml')
-        file = Pathname.new(filename)
-        raise IOError, "Couldn't find #{file} at #{file.expand_path}" unless File.exist?(file)
-        new YAML.load(file.open), file.dirname
+      # @overload load(path)
+      #   @param [String] path location of the app's 'app.yaml'
+      # @overload load(path)
+      #   @param [String] path location of the directory that
+      #      contains the app's 'app.yaml'
+      # @overload load(path)
+      #   @param [String] path location of the app
+      def self.load(path = 'app.yaml')
+        pathname = Pathname.new(path)
+        app_yaml = Pathname.new('app.yaml')
+
+        # Defaults: no config, work in directory of file
+        dummy_file = Struct.new(:open, :exist?)
+        file = dummy_file.new('{}', true)
+        dir = pathname.parent
+
+        if pathname.basename == app_yaml
+          file, dir = pathname, pathname.dirname
+        elsif pathname.directory? && pathname.children.include?(pathname.join app_yaml)
+          file, dir = pathname.join(app_yaml), pathname
+        elsif pathname.file? && pathname.parent.children.include?(pathname.parent.join app_yaml)
+          file, dir = pathname.parent.join(app_yaml), pathname.parent
+        end
+        raise IOError, "Couldn't find #{file} at #{file.expand_path}" unless file.exist?
+        new YAML.load(file.open), dir 
       end
 
       # @param [Hash] config user options
