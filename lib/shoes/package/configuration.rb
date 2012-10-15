@@ -28,17 +28,19 @@ module Shoes
         pathname = Pathname.new(path)
         app_yaml = Pathname.new('app.yaml')
 
-        # Defaults: no config, work in directory of file
-        dummy_file = Struct.new(:open, :exist?)
-        file = dummy_file.new('{}', true)
-        dir = pathname.parent
+        dummy_file = Struct.new(:open, :exist?, :expand_path)
 
         if pathname.basename == app_yaml
           file, dir = pathname, pathname.dirname
         elsif pathname.directory? && pathname.children.include?(pathname.join app_yaml)
           file, dir = pathname.join(app_yaml), pathname
         elsif pathname.file? && pathname.parent.children.include?(pathname.parent.join app_yaml)
-          file, dir = pathname.parent.join(app_yaml), pathname.parent
+            file, dir = pathname.parent.join(app_yaml), pathname.parent
+        else
+          # Can't find any 'app.yaml', so use empty config with
+          # existential qualities of the original pathname
+          file = dummy_file.new('{}', pathname.exist?, pathname.expand_path)
+          dir = pathname.parent
         end
         raise IOError, "Couldn't find #{file} at #{file.expand_path}" unless file.exist?
         new YAML.load(file.open), dir 
