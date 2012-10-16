@@ -13,11 +13,12 @@ module Shoes
         # @param [Shoes::Package::Configuration] config user configuration
         def initialize(config)
           @config = config
-          @default_package_dir = Pathname.pwd.join('pkg')
+          @default_package_dir = working_dir.join('pkg')
           @package_dir = default_package_dir
           root = Pathname.new(__FILE__).join('../../../../..')
           @default_template_path = root.join('static/shoes-app-template.zip')
           @template_path = default_template_path
+          @tmp = @package_dir.join('tmp')
         end
 
         # @return [Pathname] default package directory: ./pkg
@@ -34,18 +35,42 @@ module Shoes
 
         attr_reader :config
 
+        attr_reader :tmp
+
         def package
+          remove_tmp
+          create_tmp
           extract_template
           inject_icon
           inject_config
           jar_path = ensure_jar_exists
           inject_jar jar_path
+          move_to_package_dir tmp_app_path
+          tweak_permissions
+        rescue => e
+          raise e
+        ensure
+          remove_tmp
+        end
+
+        def create_tmp
+          tmp.mkpath
+        end
+
+        def remove_tmp
+          tmp.rmtree if tmp.exist?
+        end
+
+        def move_to_package_dir(path)
+          dest = package_dir.join(path.basename)
+          dest.rmtree
+          mv path.to_s, dest
         end
 
         def ensure_jar_exists
           jar = Jar.new(@config)
-          path = package_dir.join(jar.filename)
-          jar.package(package_dir) unless File.exist?(path)
+          path = tmp.join(jar.filename)
+          jar.package(tmp) unless File.exist?(path)
           path
         end
 
@@ -55,7 +80,7 @@ module Shoes
         #
         # @param [Pathname, String] jar_path the location of the JAR to inject
         def inject_jar(jar_path)
-          jar_dir = app_path.join('Contents/Java')
+          jar_dir = tmp_app_path.join('Contents/Java')
           jar_dir.rmtree
           jar_dir.mkdir
           cp Pathname.new(jar_path), jar_dir
@@ -67,38 +92,55 @@ module Shoes
           Zip::ZipFile.new(template_path).each do |entry|
             # Fragile hack
             extracted_app = template_path.join(entry.name) if Pathname.new(entry.name).extname == '.app'
-            p = package_dir.join(entry.name)
+            p = tmp.join(entry.name)
             p.dirname.mkpath
             entry.extract(p)
           end
-          mv package_dir.join(extracted_app.basename), app_path
-          executable_path.chmod 0755
+          mv tmp.join(extracted_app.basename.to_s), tmp_app_path
         end
 
         def inject_config
-          plist = app_path.join 'Contents/Info.plist'
+          plist = tmp_app_path.join 'Contents/Info.plist'
           template = Plist.parse_xml(plist)
           template['CFBundleIdentifier'] = "com.hackety.shoes.#{config.shortname}"
           template['CFBundleDisplayName'] = config.name
           template['CFBundleName'] = config.name
           template['CFBundleVersion'] = config.version
-          template['CFBundleIconFile'] = Pathname.new(config.icons[:osx]).basename.to_s
+          template['CFBundleIconFile'] = Pathname.new(config.icons[:osx]).basename.to_s if config.icons[:osx]
           File.open(plist, 'w') { |f| f.write template.to_plist }
         end
 
         def inject_icon
-          icon_path = Pathname.new(config.icons[:osx])
-          raise IOError, "Couldn't find app icon at #{icon_path}" unless icon_path.exist?
-          resources_dir = app_path.join('Contents/Resources')
-          cp icon_path, resources_dir.join(icon_path.basename)
+          if config.icons[:osx]
+            icon_path = working_dir.join(config.icons[:osx])
+            raise IOError, "Couldn't find app icon at #{icon_path}" unless icon_path.exist?
+            resources_dir = tmp_app_path.join('Contents/Resources')
+            cp icon_path, resources_dir.join(icon_path.basename)
+          end
+        end
+
+        def tweak_permissions
+          executable_path.chmod 0755
+        end
+
+        def app_name
+          "#{config.name}.app"
+        end
+
+        def tmp_app_path
+          tmp.join app_name
         end
 
         def app_path
-          package_dir.join("#{config.name}.app")
+          package_dir.join app_name
         end
 
         def executable_path
           app_path.join('Contents/MacOS/JavaAppLauncher')
+        end
+
+        def working_dir
+          config.working_dir
         end
       end
     end

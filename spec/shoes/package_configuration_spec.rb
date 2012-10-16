@@ -13,18 +13,19 @@ describe Shoes::Package::Configuration do
     its(:release) { should eq('Rookie') }
     its(:icons) { should be_an_instance_of(Hash) }
     its(:dmg) { should be_an_instance_of(Hash) }
+    its(:run) { should be_nil }
 
     describe "#icon" do
-      it 'has osx' do
-        subject.icons[:osx].should eq('path/to/default/App.icns')
+      it 'osx is nil' do
+        subject.icons[:osx].should be_nil
       end
 
-      it 'has gtk' do
-        subject.icons[:gtk].should eq('path/to/default/app.png')
+      it 'gtk is nil' do
+        subject.icons[:gtk].should be_nil
       end
 
-      it 'has win32' do
-        subject.icons[:win32].should eq('path/to/default/App.ico')
+      it 'win32 is nil' do
+        subject.icons[:win32].should be_nil
       end
     end
 

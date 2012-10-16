@@ -2,12 +2,18 @@ require 'shoes/package/configuration'
 
 module Warbler
   module Traits
+    # Hack to control the executable
+    class NoGemspec
+      def update_archive(jar); end
+    end
+
     class Shoes
       include Trait
       include PathmapHelper
 
       def self.detect?
-        File.exist? "app.yaml"
+        #File.exist? "app.yaml"
+        true
       end
 
       def self.requires?(trait)

@@ -53,9 +53,14 @@ usage: #{opts.program_name} file
   end
 
   def package(path, packages = [])
+    begin
+      config = Shoes::Package::Configuration.load(path)
+    rescue Errno::ENOENT => e
+      abort "shoes: #{e.message}"
+    end
     packages.each do |p|
-      config = Shoes::Package::Config.load(path)
-      packager = Shoes::Package.new(p.backend, p.wrapper)
+      puts "Packaging #{p.backend}:#{p.wrapper}..."
+      packager = Shoes::Package.new(p.backend, p.wrapper, config)
       packager.package
     end
   end

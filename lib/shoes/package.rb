@@ -9,7 +9,7 @@ module Shoes
         puts "Packaging as #{@backend}:#{@wrapper}"
       end
     end
-    def self.new(backend, wrapper)
+    def self.new(backend, wrapper, config)
       # Belongs in Shoes::Configuration
       require "shoes/#{backend.to_s.downcase}"
       backend_class_name = backend.to_s.capitalize
@@ -17,8 +17,7 @@ module Shoes
       klass = [backend_class_name, 'Package', wrapper_class_name].inject(Shoes) do |klass, const|
         klass.const_get(const)
       end
-      #klass = Shoes.const_get("#{backend_class_name}::Package::#{wrapper_class_name}")
-      klass.new
+      klass.new config
     rescue LoadError => e
       raise LoadError, "Couldn't load backend '#{backend}'. Error: #{e.message}\n#{e.backtrace.join("\n")}"
       P.new(backend, wrapper)

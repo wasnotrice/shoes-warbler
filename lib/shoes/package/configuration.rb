@@ -1,4 +1,5 @@
 require 'pathname'
+require 'yaml'
 
 module Shoes
   module Package
@@ -28,21 +29,22 @@ module Shoes
         pathname = Pathname.new(path)
         app_yaml = Pathname.new('app.yaml')
 
-        dummy_file = Struct.new(:open, :exist?, :expand_path)
+        dummy_file = Struct.new(:open, :exist?, :expand_path, :basename)
 
         if pathname.basename == app_yaml
           file, dir = pathname, pathname.dirname
-        elsif pathname.directory? && pathname.children.include?(pathname.join app_yaml)
+        elsif pathname.directory?
           file, dir = pathname.join(app_yaml), pathname
         elsif pathname.file? && pathname.parent.children.include?(pathname.parent.join app_yaml)
-            file, dir = pathname.parent.join(app_yaml), pathname.parent
+          file, dir = pathname.parent.join(app_yaml), pathname.parent
         else
-          # Can't find any 'app.yaml', so use empty config with
-          # existential qualities of the original pathname
-          file = dummy_file.new('{}', pathname.exist?, pathname.expand_path)
+          # Can't find any 'app.yaml', so assume we just want to wrap
+          # this file. Delegate existential qualities to the original
+          # pathname
+          options = {run: pathname.to_s}.to_yaml
+          file = dummy_file.new(options, pathname.file?, pathname.expand_path, pathname.basename)
           dir = pathname.parent
         end
-        raise IOError, "Couldn't find #{file} at #{file.expand_path}" unless file.exist?
         new YAML.load(file.open), dir 
       end
 
@@ -52,10 +54,12 @@ module Shoes
           name: 'Shoes App',
           version: '0.0.0',
           release: 'Rookie',
+          run: nil,
+          ignore: 'pkg',
           icons: {
-            osx: 'path/to/default/App.icns',
-            gtk: 'path/to/default/app.png',
-            win32: 'path/to/default/App.ico',
+            #osx: 'path/to/default/App.icns',
+            #gtk: 'path/to/default/app.png',
+            #win32: 'path/to/default/App.ico',
           },
           dmg: {
             ds_store: 'path/to/default/.DS_Store',
