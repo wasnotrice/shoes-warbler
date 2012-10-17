@@ -63,7 +63,7 @@ module Shoes
 
         def move_to_package_dir(path)
           dest = package_dir.join(path.basename)
-          dest.rmtree
+          dest.rmtree if dest.exist?
           mv path.to_s, dest
         end
 
