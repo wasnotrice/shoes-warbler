@@ -41,7 +41,7 @@ module Shoes
           # Can't find any 'app.yaml', so assume we just want to wrap
           # this file. Delegate existential qualities to the original
           # pathname
-          options = {run: pathname.to_s}.to_yaml
+          options = {run: pathname.basename.to_s}.to_yaml
           file = dummy_file.new(options, pathname.file?, pathname.expand_path, pathname.basename)
           dir = pathname.parent
         end
