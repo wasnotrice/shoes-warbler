@@ -80,8 +80,6 @@ To package a Shoes app as an APP and a JAR, using the Swt backend:
   def execute_app(app)
     swt = '-J-XstartOnFirstThread ' if RbConfig::CONFIG['host_os'] =~ /darwin/
     Process.spawn "jruby --1.9 #{swt}-rrubygems -Ilib -I#{Dir.pwd} -rshoes -rshoes/configuration -e 'Shoes.configuration.backend = :swt' -e 'require \"#{app}\"'"
-    #Shoes.configuration.backend = :swt
-    #require app
   end
 
   def run(args)
