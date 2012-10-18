@@ -1,0 +1,18 @@
+#!/usr/bin/env sh
+
+case "${MACHTYPE:-}" in
+  (*darwin*)
+    swt_opt="-J-XstartOnFirstThread "
+    ;;
+esac
+
+Argv='['
+i=1
+while [ $i -le $# ]; do
+  Argv=${Argv}\"${!i}\"
+  i=$((i+1))
+done
+Argv="${Argv}]"
+echo $0
+jruby --1.9 ${swt_opt:-}-rrubygems -e 'ARGV.replace('${Argv}')' -e '$LOAD_PATH << File.expand_path("../../lib", "'${0}'") << File.expand_path("../..", "'${0}i'")' -e 'require "shoes/cli"' -e 'ShoesCLI.new.run(ARGV)'
+
