@@ -3,10 +3,11 @@ require 'yaml'
 
 module Shoes
   module Package
-    # Configuration for Shoes packagers. Example usage:
+    # Configuration for Shoes packagers.
     #
-    #     custom_config = YAML.load(File.open('app.yaml'))
-    #     config = Shoes::Package::Configuration(custom_config)
+    # @example
+    #   config_file = '/path/to/app.yaml'
+    #   config = Shoes::Package::Configuration.load(config_file)
     #
     # If your configuration uses hashes, the keys will always be
     # symbols, even if you have created it with string keys. It's just
@@ -16,7 +17,29 @@ module Shoes
     # after initialization, dump it with #to_hash, make your changes,
     # and instantiate a new object.
     class Configuration
-      # Convenience method for loading config from a file.
+      # Convenience method for loading config from a file. Note that you
+      # can pass four kinds of paths to the loader. Given the following
+      # file structure:
+      #  
+      #   ├── a
+      #   │   ├── app.yaml
+      #   │   └── shoes-app-a.rb
+      #   └── b
+      #   └── shoes-app-b.rb
+      #
+      # To package an app that has an `app.yaml`, like `shoes-app-a.rb`,
+      # you can call the loader with any of:
+      #
+      # - a/app.yaml
+      # - a
+      # - a/shoes-app-a.rb
+      #
+      # These will all find and use your configuration in `a/app.yaml`.
+      # To package an app that does not have an `app.yaml`, like
+      # `b/shoes-app-b.rb`, you must call the loader with the path of
+      # the script itself. Note that without an `app.yaml`, you will
+      # only bundle a single file, and your app will simply use the
+      # Shoes app icon.
       #
       # @overload load(path)
       #   @param [String] path location of the app's 'app.yaml'
@@ -49,6 +72,7 @@ module Shoes
       end
 
       # @param [Hash] config user options
+      # @param [String] working_dir directory in which do packaging work
       def initialize(config = {}, working_dir = Dir.pwd)
         defaults = {
           name: 'Shoes App',
@@ -94,7 +118,7 @@ module Shoes
       end
 
       def ==(other)
-        super unless other.respond_to?(:to_hash)
+        super unless other.class == self.class && other.respond_to?(:to_hash)
         @config == other.to_hash
       end
 
