@@ -4,6 +4,7 @@
 pkg
 doc
 .yardoc
+tags
 
 # Spec artifacts
 spec/test_app/pkg
