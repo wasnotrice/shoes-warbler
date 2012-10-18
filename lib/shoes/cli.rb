@@ -19,7 +19,7 @@ module Shoes
         opts.separator ''
         opts.separator 'Options:'
 
-        opts.on('-p', '--package PACKAGE_TYPE', 'Package as BACKEND:PACKAGE.') do |package|
+        opts.on('-p', '--package PACKAGE_TYPE', 'Package as BACKEND:PACKAGE') do |package|
           unless package =~ /^(swt):(app|jar)$/
             abort("#{opts.program_name}: Can't package as '#{package}'. See '#{opts.program_name} --help'")
           end
@@ -47,7 +47,7 @@ module Shoes
   To run a Shoes app:
       #{opts.program_name} path/to/shoes-app.rb
 
-  To package a Shoes app as an APP and a JAR, using the Swt backend:
+  Two ways to package a Shoes app as an APP and a JAR, using the Swt backend:
       #{opts.program_name} -p swt:app -p swt:jar path/to/app.yaml
       #{opts.program_name} -p swt:app -p swt:jar path/to/shoes-app.rb
       EOS
