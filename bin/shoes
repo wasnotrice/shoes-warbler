@@ -2,4 +2,4 @@
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 require 'shoes/cli'
 
-ShoesCLI.new.run(ARGV)
+Shoes::CLI.new.run(ARGV)

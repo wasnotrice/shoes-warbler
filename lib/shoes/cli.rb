@@ -4,87 +4,90 @@ require 'shoes/package'
 require 'shoes/package/configuration'
 require 'shoes/swt/package/app'
 
-class Package
-  def initialize(arg)
-    @backend, @wrapper = arg.split(':')
-  end
+module Shoes
+  class CLI
+    def parse(args)
+      options = Struct.new(:packages).new
+      options.packages = []
 
-  attr_reader :backend, :wrapper
-end
+      opts = OptionParser.new do |opts|
+        opts.program_name = 'shoes'
+        opts.banner = <<-EOS
+  usage: #{opts.program_name} file
+     or: #{opts.program_name} [-p package] file
+        EOS
+        opts.separator ''
+        opts.separator 'Options:'
 
-class ShoesCLI
-  def parse(args)
-    options = Struct.new(:packages).new
-    options.packages = []
-
-    opts = OptionParser.new do |opts|
-      opts.program_name = 'shoes'
-      opts.banner = <<-EOS
-usage: #{opts.program_name} file
-   or: #{opts.program_name} [-p package] file
-      EOS
-      opts.separator ''
-      opts.separator 'Options:'
-
-      opts.on('-p', '--package PACKAGE_TYPE', 'Package as BACKEND:PACKAGE.') do |package|
-        unless package =~ /^(swt):(app|jar)$/
-          abort("#{opts.program_name}: Can't package as '#{package}'. See '#{opts.program_name} --help'")
+        opts.on('-p', '--package PACKAGE_TYPE', 'Package as BACKEND:PACKAGE.') do |package|
+          unless package =~ /^(swt):(app|jar)$/
+            abort("#{opts.program_name}: Can't package as '#{package}'. See '#{opts.program_name} --help'")
+          end
+          options.packages << Package.new(package)
         end
-        options.packages << Package.new(package)
+        opts.separator "\nPackage types:"
+        opts.separator package_types(opts)
+        opts.separator "\nExamples:"
+        opts.separator examples(opts)
       end
-      opts.separator "\nPackage types:"
-      opts.separator package_types(opts)
-      opts.separator "\nExamples:"
-      opts.separator examples(opts)
+
+      opts.parse!(args)
+      options
     end
 
-    opts.parse!(args)
-    options
-  end
-
-  def package_types(opts)
-    <<-EOS
-    swt:app     A standalone OS X executable with the Swt backend
-    swt:jar     An executable JAR with the Swt backend
-    EOS
-  end
-
-  def examples(opts)
-    <<-EOS
-To run a Shoes app:
-    #{opts.program_name} path/to/shoes-app.rb
-
-To package a Shoes app as an APP and a JAR, using the Swt backend:
-    #{opts.program_name} -p swt:app -p swt:jar path/to/app.yaml
-    #{opts.program_name} -p swt:app -p swt:jar path/to/shoes-app.rb
-    EOS
-  end
-
-  def package(path, packages = [])
-    begin
-      config = Shoes::Package::Configuration.load(path)
-    rescue Errno::ENOENT => e
-      abort "shoes: #{e.message}"
+    def package_types(opts)
+      <<-EOS
+      swt:app     A standalone OS X executable with the Swt backend
+      swt:jar     An executable JAR with the Swt backend
+      EOS
     end
-    packages.each do |p|
-      puts "Packaging #{p.backend}:#{p.wrapper}..."
-      packager = Shoes::Package.new(p.backend, p.wrapper, config)
-      packager.package
+
+    def examples(opts)
+      <<-EOS
+  To run a Shoes app:
+      #{opts.program_name} path/to/shoes-app.rb
+
+  To package a Shoes app as an APP and a JAR, using the Swt backend:
+      #{opts.program_name} -p swt:app -p swt:jar path/to/app.yaml
+      #{opts.program_name} -p swt:app -p swt:jar path/to/shoes-app.rb
+      EOS
     end
-  end
 
-  # Execute a shoes app. May spawn a new process if it's necessary to
-  # add flags to the running VM, as when using the Swt backend.
-  #
-  # @param [String] app the location of the app to run
-  def execute_app(app)
-    swt = '-J-XstartOnFirstThread ' if RbConfig::CONFIG['host_os'] =~ /darwin/
-    Process.spawn "jruby --1.9 #{swt}-rrubygems -Ilib -I#{Dir.pwd} -rshoes -rshoes/configuration -e 'Shoes.configuration.backend = :swt' -e 'require \"#{app}\"'"
-  end
+    def package(path, packages = [])
+      begin
+        config = Shoes::Package::Configuration.load(path)
+      rescue Errno::ENOENT => e
+        abort "shoes: #{e.message}"
+      end
+      packages.each do |p|
+        puts "Packaging #{p.backend}:#{p.wrapper}..."
+        packager = Shoes::Package.new(p.backend, p.wrapper, config)
+        packager.package
+      end
+    end
 
-  def run(args)
-    options = parse(args)
-    package args.shift, options.packages
-    execute_app(args.first) unless args.empty?
+    # Execute a shoes app. May spawn a new process if it's necessary to
+    # add flags to the running VM, as when using the Swt backend.
+    #
+    # @param [String] app the location of the app to run
+    def execute_app(app)
+      swt = '-J-XstartOnFirstThread ' if RbConfig::CONFIG['host_os'] =~ /darwin/
+      Process.spawn "jruby --1.9 #{swt}-rrubygems -Ilib -I#{Dir.pwd} -rshoes -rshoes/configuration -e 'Shoes.configuration.backend = :swt' -e 'require \"#{app}\"'"
+    end
+
+    def run(args)
+      options = parse(args)
+      package args.shift, options.packages
+      execute_app(args.first) unless args.empty?
+    end
+
+    # Convenience class representing a backend:wrapper pair
+    class Package
+      def initialize(arg)
+        @backend, @wrapper = arg.split(':')
+      end
+
+      attr_reader :backend, :wrapper
+    end
   end
 end
