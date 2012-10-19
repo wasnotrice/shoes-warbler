@@ -7,7 +7,7 @@ describe Shoes::Package::Configuration do
 
     its(:name) { should eq('Shoes App') }
     its(:shortname) { should eq('shoesapp') }
-    its(:ignore) { should be_empty }
+    its(:ignore) { should eq(['pkg']) }
     its(:gems) { should include('shoes') }
     its(:version) { should eq('0.0.0') }
     its(:release) { should eq('Rookie') }

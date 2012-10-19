@@ -52,7 +52,7 @@ module Shoes
         pathname = Pathname.new(path)
         app_yaml = Pathname.new('app.yaml')
 
-        dummy_file = Struct.new(:open, :exist?, :expand_path, :basename)
+        dummy_file = Struct.new(:read)
 
         if pathname.basename == app_yaml
           file, dir = pathname, pathname.dirname
@@ -62,13 +62,14 @@ module Shoes
           file, dir = pathname.parent.join(app_yaml), pathname.parent
         else
           # Can't find any 'app.yaml', so assume we just want to wrap
-          # this file. Delegate existential qualities to the original
-          # pathname
-          options = {run: pathname.basename.to_s}.to_yaml
-          file = dummy_file.new(options, pathname.file?, pathname.expand_path, pathname.basename)
+          # this file. If it exists, load default options. If not, let
+          # the filesystem raise an error.
+          default_options = {run: pathname.basename.to_s}.to_yaml
+          options = pathname.exist? ? default_options : pathname
+          file = dummy_file.new(options)
           dir = pathname.parent
         end
-        new YAML.load(file.open), dir 
+        new YAML.load(file.read), dir 
       end
 
       # @param [Hash] config user options
